@@ -33,3 +33,4 @@ project/public/assets
 # Ignore key files for decrypting credentials and more.
 project/config/*.key
 
+AGENTS.md
