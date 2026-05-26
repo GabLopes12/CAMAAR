@@ -1,28 +1,35 @@
 # language: pt
-Funcionalidade: Admin criar formulário a partir de um template para as turmas que escolher
+Funcionalidade: Criação de Formulário de Avaliação de Turma
 
-  Eu como Administrador
-  Quero criar um formulário baseado em um template para as turmas que eu escolher
-  A fim de avaliar o desempenho das turmas no semestre atual
+  Como um Administrador
+  Quero escolher criar um formulário para os docentes ou os discentes de uma turma
+  A fim de avaliar o desempenho de uma matéria
 
-  Cenário: Administrador cria formulário com sucesso
-    Dado que sou administrador
-    E existe pelo menos um template criado por mim
-    E existe pelo menos uma turma cadastrada
-    Quando eu preencher o nome do formulário
-    E selecionar o template e a turma desejada
-    E clicar no botão 'Enviar'
-    Então devo ver uma mensagem dizendo 'Formulário gerado com sucesso!'
-    E as questões do template devem ser clonadas para o novo formulário
+  Cenário: Criação de formulário com sucesso para discentes
+    Dado que eu acesse a tela de "Criação de Formulários"
+    Quando eu selecionar a matéria "Cálculo 1" e a turma "1"
+    E definir o público-alvo como "Discentes"
+    E preencher as perguntas do formulário de avaliação
+    E clicar em "Publicar Formulário"
+    Então o sistema deve salvar o formulário com sucesso
+    E exibir a mensagem "Formulário de avaliação para discentes publicado com sucesso."
+    E o formulário deve ficar disponível para os alunos da turma "1" responderem
 
-  Cenário: Administrador tenta criar formulário sem selecionar um template
-    Dado que sou um administrador
-    E estou criando um formulário 
-    Quando eu tentar criar um formulário sem selecionar nenhum template
-    Então o sistema deve exibir uma mensagem dizendo 'É necessário escolher um template base'
+  Cenário: Tentativa de publicação de formulário sem selecionar o público-alvo
+    Dado que eu acesse a tela de "Criação de Formulários"
+    Quando eu selecionar a matéria "Cálculo 1" e a turma "1"
+    E deixar o campo de público-alvo em branco
+    E preencher as perguntas do formulário de avaliação
+    E clicar em "Publicar Formulário"
+    Então o sistema não deve permitir a publicação
+    E deve exibir um alerta impeditivo "Por favor, selecione se o formulário é para Docentes ou Discentes."
 
-  Cenário: Administrador tenta criar formulário sem selecionar nenhuma turma
-    Dado que sou um administrador
-    E estou criando um formulário
-    Quando eu tentar criar um formulário sem selecionar nenhuma turma
-    Então o sistema deve exibir uma mensagem dizendo 'É necessário escolher ao menos uma turma'
+  Cenário: Tentativa de criação de formulário sem preencher as perguntas
+    Dado que eu acesse a tela de "Criação de Formulários"
+    Quando eu selecionar a matéria Cálculo 2" e a turma "3"
+    E definir o público-alvo como "Docentes"
+    E não adicionar nenhuma pergunta ao formulário
+    E clicar em "Publicar Formulário"
+    Então o sistema deve bloquear a ação
+    E exibir a mensagem de erro "O formulário não pode ser publicado sem perguntas cadastradas."
+
