@@ -2,6 +2,10 @@
 
 <%= render @formulario %>
 
+<div style="margin-top: 20px; margin-bottom: 20px;">
+  <%= link_to "Exportar Resultados (CSV)", exportar_csv_formulario_path(@formulario), style: "padding: 10px 15px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;" %>
+</div>
+
 <div>
   <%= link_to "Edit this formulario", edit_formulario_path(@formulario) %> |
   <%= link_to "Back to formularios", formularios_path %>

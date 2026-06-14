@@ -2,7 +2,14 @@ Rails.application.routes.draw do
   resources :resposta
   resources :submissaos
   resources :questaos
-  resources :formularios
+  
+  # Aqui adicionamos a rota específica para o download do CSV vinculada ao formulário
+  resources :formularios do
+    member do
+      get :exportar_csv
+    end
+  end
+  
   resources :templates
   resources :turmas
   resources :professors

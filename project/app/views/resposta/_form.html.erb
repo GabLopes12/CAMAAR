@@ -12,13 +12,13 @@
   <% end %>
 
   <div>
-    <%= form.label :valor_texto, style: "display: block" %>
-    <%= form.textarea :valor_texto %>
+    <%= form.label :valor_texto, "Comentário (Opcional)", style: "display: block" %>
+    <%= form.text_area :valor_texto %>
   </div>
 
   <div>
-    <%= form.label :valor_numerico, style: "display: block" %>
-    <%= form.number_field :valor_numerico %>
+    <%= form.label :Score, "Nota da Avaliação", style: "display: block" %>
+    <%= form.number_field :Score %>
   </div>
 
   <div>
@@ -32,6 +32,6 @@
   </div>
 
   <div>
-    <%= form.submit %>
+    <%= form.submit "Enviar Resposta" %>
   </div>
 <% end %>
