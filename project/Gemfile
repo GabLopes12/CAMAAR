@@ -67,3 +67,7 @@ group :test do
   gem "database_cleaner"
 end
 
+
+gem "rspec-rails", "~> 8.0", groups: [:development, :test]
+
+gem "csv", "~> 3.3"

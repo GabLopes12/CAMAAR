@@ -1,5 +1,5 @@
 class FormulariosController < ApplicationController
-  before_action :set_formulario, only: %i[ show edit update destroy ]
+  before_action :set_formulario, only: %i[ show edit update destroy exportar_csv ]
 
   # GET /formularios or /formularios.json
   def index
@@ -55,6 +55,20 @@ class FormulariosController < ApplicationController
       format.html { redirect_to formularios_path, notice: "Formulario was successfully destroyed.", status: :see_other }
       format.json { head :no_content }
     end
+  end
+
+  # GET /formularios/1/exportar_csv
+  def exportar_csv
+    require 'csv'
+    
+    csv_data = CSV.generate(headers: true) do |csv|
+      csv << ["ID da Pergunta", "Enunciado", "Scores Atribuídos"]
+      
+    end
+
+    send_data csv_data, 
+              filename: "respostas_formulario_#{@formulario.id}.csv", 
+              type: "text/csv"
   end
 
   private
