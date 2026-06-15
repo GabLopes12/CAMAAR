@@ -5,18 +5,32 @@ class ApplicationController < ActionController::Base
   # Changes to the importmap will invalidate the etag for HTML responses
   stale_when_importmap_changes
 
+  helper_method :current_admin, :current_user, :user_signed_in?
+
   private
 
-  # Login (#104) ainda não foi implementado: por ora o admin autenticado é
-  # identificado pela sessão, alimentada por um parâmetro admin_id repassado
-  # nos links/formulários na primeira requisição. Quando nada foi informado
-  # ainda (ex: acesso direto a /templates), cai para o primeiro admin
-  # cadastrado, para que a sessão fique consistente a partir da próxima requisição.
   def current_admin
     return @current_admin if defined?(@current_admin)
 
     session[:admin_id] = params[:admin_id] if params[:admin_id].present?
     @current_admin = Admin.find_by(id: session[:admin_id]) || Admin.first
   end
-  helper_method :current_admin
+
+  def current_user
+    @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id].present?
+  end
+
+  def user_signed_in?
+    current_user.present?
+  end
+
+  def require_login
+    redirect_to login_path, alert: "Faca login para continuar" unless user_signed_in?
+  end
+
+  def require_admin
+    return if user_signed_in? && current_user.admin?
+
+    redirect_to root_path, alert: "Acesso restrito a administradores"
+  end
 end
