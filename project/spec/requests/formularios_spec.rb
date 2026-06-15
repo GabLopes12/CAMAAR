@@ -3,24 +3,7 @@ require 'rails_helper'
 RSpec.describe "Formularios", type: :request do
   describe "GET /formularios/:id/exportar_csv" do
     it "retorna um arquivo CSV de sucesso com as respostas da avaliação" do
-      # 1. Base
-      departamento = Departamento.new
-      departamento.save(validate: false)
-
-      admin = Admin.new(departamento_id: departamento.id)
-      admin.save(validate: false)
-
-      professor = Professor.new(departamento_id: departamento.id)
-      professor.save(validate: false)
-
-      template = Template.new(admin_id: admin.id)
-      template.save(validate: false)
-
-      turma = Turma.new(departamento_id: departamento.id, professor_id: professor.id)
-      turma.save(validate: false)
-
-      formulario = Formulario.new(turma_id: turma.id, template_id: template.id, admin_id: admin.id)
-      formulario.save(validate: false)
+      formulario = create(:formulario)
 
       get exportar_csv_formulario_path(formulario, format: :csv)
 
@@ -33,9 +16,10 @@ RSpec.describe "Formularios", type: :request do
 
   describe "POST /formularios" do
     it "cria um formulário a partir de um template e clona as questões do template" do
-      admin = criar_admin
-      template = criar_template_com_questao(admin, enunciado: "O professor foi claro?")
-      turma = criar_turma
+      admin = create(:admin)
+      template = create(:template, admin: admin)
+      create(:questao, template: template, enunciado: "O professor foi claro?")
+      turma = create(:turma)
 
       expect {
         post formularios_path, params: {
@@ -55,8 +39,8 @@ RSpec.describe "Formularios", type: :request do
     end
 
     it "não cria o formulário quando nenhum template é selecionado" do
-      admin = criar_admin
-      turma = criar_turma
+      admin = create(:admin)
+      turma = create(:turma)
 
       expect {
         post formularios_path, params: {
@@ -70,8 +54,8 @@ RSpec.describe "Formularios", type: :request do
     end
 
     it "não cria o formulário quando nenhuma turma é selecionada" do
-      admin = criar_admin
-      template = criar_template_com_questao(admin)
+      admin = create(:admin)
+      template = create(:template, :com_questao, admin: admin)
 
       expect {
         post formularios_path, params: {

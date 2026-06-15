@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe "Templates", type: :request do
   describe "POST /templates" do
     it "cria um template com uma questão e redireciona para a lista de templates" do
-      admin = criar_admin
+      admin = create(:admin)
 
       expect {
         post templates_path, params: {
@@ -25,7 +25,7 @@ RSpec.describe "Templates", type: :request do
     end
 
     it "não cria o template e exibe erro quando o nome está em branco" do
-      admin = criar_admin
+      admin = create(:admin)
 
       expect {
         post templates_path, params: {
@@ -43,7 +43,7 @@ RSpec.describe "Templates", type: :request do
     end
 
     it "não cria o template e exibe erro quando a questão não possui enunciado" do
-      admin = criar_admin
+      admin = create(:admin)
 
       expect {
         post templates_path, params: {
@@ -61,7 +61,7 @@ RSpec.describe "Templates", type: :request do
     end
 
     it "adiciona um novo campo de questão sem persistir nada ao clicar em '+'" do
-      admin = criar_admin
+      admin = create(:admin)
       template_count_before = Template.count
       questao_count_before = Questao.count
 
@@ -80,11 +80,11 @@ RSpec.describe "Templates", type: :request do
 
   describe "GET /templates" do
     it "lista apenas os templates do administrador autenticado" do
-      admin = criar_admin
-      outro_admin = criar_admin
+      admin = create(:admin)
+      outro_admin = create(:admin)
 
-      meu_template = criar_template_com_questao(admin, titulo: "Meu Template")
-      criar_template_com_questao(outro_admin, titulo: "Template de Outro Admin")
+      meu_template = create(:template, :com_questao, admin: admin, title: "Meu Template")
+      create(:template, :com_questao, admin: outro_admin, title: "Template de Outro Admin")
 
       get templates_path(admin_id: admin.id)
 
@@ -96,9 +96,9 @@ RSpec.describe "Templates", type: :request do
 
   describe "GET /templates/:id/edit" do
     it "bloqueia o acesso a um template de outro administrador" do
-      admin = criar_admin
-      outro_admin = criar_admin
-      template_outro_admin = criar_template_com_questao(outro_admin)
+      admin = create(:admin)
+      outro_admin = create(:admin)
+      template_outro_admin = create(:template, :com_questao, admin: outro_admin)
 
       get edit_template_path(template_outro_admin, admin_id: admin.id)
 
@@ -110,11 +110,12 @@ RSpec.describe "Templates", type: :request do
 
   describe "PATCH /templates/:id" do
     it "atualiza o template sem afetar as questões dos formulários já gerados a partir dele" do
-      admin = criar_admin
-      template = criar_template_com_questao(admin, enunciado: "Pergunta original")
-      turma = criar_turma
+      admin = create(:admin)
+      template = create(:template, admin: admin)
+      create(:questao, template: template, enunciado: "Pergunta original")
+      turma = create(:turma)
 
-      formulario = admin.formularios.create!(title: "Formulário Gerado", template_id: template.id, turma_id: turma.id, target_role: template.target_role)
+      formulario = create(:formulario, admin: admin, template: template, turma: turma, title: "Formulário Gerado", target_role: template.target_role)
       template.questaos.each { |questao| formulario.questaos.create!(enunciado: questao.enunciado, tipo: questao.tipo) }
 
       questao_existente = template.questaos.first
@@ -137,8 +138,8 @@ RSpec.describe "Templates", type: :request do
     end
 
     it "exige enunciado para novas questões adicionadas durante a edição" do
-      admin = criar_admin
-      template = criar_template_com_questao(admin)
+      admin = create(:admin)
+      template = create(:template, :com_questao, admin: admin)
       questao_existente = template.questaos.first
 
       patch template_path(template), params: {
@@ -160,11 +161,11 @@ RSpec.describe "Templates", type: :request do
 
   describe "DELETE /templates/:id" do
     it "remove o template, desvincula formulários gerados e mantém suas questões clonadas" do
-      admin = criar_admin
-      template = criar_template_com_questao(admin)
-      turma = criar_turma
+      admin = create(:admin)
+      template = create(:template, :com_questao, admin: admin)
+      turma = create(:turma)
 
-      formulario = admin.formularios.create!(title: "Formulário Gerado", template_id: template.id, turma_id: turma.id, target_role: template.target_role)
+      formulario = create(:formulario, admin: admin, template: template, turma: turma, title: "Formulário Gerado", target_role: template.target_role)
       template.questaos.each { |questao| formulario.questaos.create!(enunciado: questao.enunciado, tipo: questao.tipo) }
 
       expect {
