@@ -1,9 +1,10 @@
 class FormulariosController < ApplicationController
   before_action :set_formulario, only: %i[ show edit update destroy exportar_csv ]
+  before_action :set_select_options, only: %i[ new create edit update ]
 
   # GET /formularios or /formularios.json
   def index
-    @formularios = Formulario.all
+    @formularios = current_admin ? current_admin.formularios : Formulario.all
   end
 
   # GET /formularios/1 or /formularios/1.json
@@ -12,7 +13,7 @@ class FormulariosController < ApplicationController
 
   # GET /formularios/new
   def new
-    @formulario = Formulario.new
+    @formulario = Formulario.new(admin_id: current_admin&.id)
   end
 
   # GET /formularios/1/edit
@@ -22,15 +23,15 @@ class FormulariosController < ApplicationController
   # POST /formularios or /formularios.json
   def create
     @formulario = Formulario.new(formulario_params)
+    @formulario.target_role ||= @formulario.template&.target_role
 
-    respond_to do |format|
-      if @formulario.save
-        format.html { redirect_to @formulario, notice: "Formulario was successfully created." }
-        format.json { render :show, status: :created, location: @formulario }
-      else
-        format.html { render :new, status: :unprocessable_content }
-        format.json { render json: @formulario.errors, status: :unprocessable_content }
+    if @formulario.save
+      @formulario.template.questaos.each do |questao|
+        @formulario.questaos.create!(enunciado: questao.enunciado, tipo: questao.tipo)
       end
+      redirect_to formularios_path, notice: "Formulário gerado com sucesso!"
+    else
+      render :new, status: :unprocessable_content
     end
   end
 
@@ -79,6 +80,14 @@ class FormulariosController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def formulario_params
-      params.expect(formulario: [ :title, :target_role, :status, :template_id, :turma_id, :admin_id ])
+      attrs = params.expect(formulario: [ :title, :target_role, :status, :template_id, :turma_id, :admin_id ])
+      attrs[:admin_id] = current_admin.id if current_admin
+      attrs
+    end
+
+    # Opções disponíveis para os selects de template e turma do formulário.
+    def set_select_options
+      @templates = current_admin ? current_admin.templates : Template.all
+      @turmas = Turma.all
     end
 end

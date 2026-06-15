@@ -1,16 +1,23 @@
 <p style="color: green"><%= notice %></p>
+<p style="color: red"><%= alert %></p>
 
-<% content_for :title, "Templates" %>
+<% content_for :title, "Meus Templates" %>
 
-<h1>Templates</h1>
+<h1>Meus Templates</h1>
 
 <div id="templates">
   <% @templates.each do |template| %>
-    <%= render template %>
-    <p>
-      <%= link_to "Show this template", template %>
-    </p>
+    <div class="template" style="margin: 10px 0; padding: 10px; border: 1px solid #ccc;">
+      <h3><%= template.title %></h3>
+      <p><strong>Público-alvo:</strong> <%= template.target_role %></p>
+      <p><strong>Questões:</strong> <%= template.questaos.count %></p>
+
+      <div>
+        <%= link_to "Editar", edit_template_path(template, admin_id: current_admin&.id) %>
+        <%= link_to "Deletar", template_path(template, admin_id: current_admin&.id) %>
+      </div>
+    </div>
   <% end %>
 </div>
 
-<%= link_to "New template", new_template_path %>
+<%= link_to "Novo template", new_template_path(admin_id: current_admin&.id) %>

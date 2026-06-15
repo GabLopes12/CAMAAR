@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_11_134500) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_14_234457) do
   create_table "admins", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "departamento_id", null: false
@@ -44,7 +44,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_11_134500) do
     t.datetime "created_at", null: false
     t.string "status"
     t.string "target_role"
-    t.integer "template_id", null: false
+    t.integer "template_id"
     t.string "title"
     t.integer "turma_id", null: false
     t.datetime "updated_at", null: false

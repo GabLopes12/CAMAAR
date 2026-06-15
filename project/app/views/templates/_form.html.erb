@@ -1,32 +1,53 @@
 <%= form_with(model: template) do |form| %>
   <% if template.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(template.errors.count, "error") %> prohibited this template from being saved:</h2>
+    <div id="error_explanation" style="color: red">
+      <h2><%= pluralize(template.errors.count, "erro") %> impediu(ram) este template de ser salvo:</h2>
 
       <ul>
-        <% template.errors.each do |error| %>
-          <li><%= error.full_message %></li>
+        <% template.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
         <% end %>
       </ul>
     </div>
   <% end %>
 
+  <%= hidden_field_tag :admin_id, current_admin&.id %>
+
   <div>
-    <%= form.label :title, style: "display: block" %>
+    <%= form.label :title, "Nome do template:" %>
     <%= form.text_field :title %>
   </div>
 
   <div>
-    <%= form.label :target_role, style: "display: block" %>
-    <%= form.text_field :target_role %>
+    <%= form.label :target_role, "Público-alvo:" %>
+    <%= form.select :target_role, [ [ "Discentes", "discente" ], [ "Docentes", "docente" ] ], include_blank: "Selecione" %>
   </div>
 
-  <div>
-    <%= form.label :admin_id, style: "display: block" %>
-    <%= form.text_field :admin_id %>
+  <h2>Questões</h2>
+
+  <div id="questoes">
+    <% questoes_attrs.each_with_index do |questao, index| %>
+      <div class="questao-fields">
+        <% if questao[:id] %>
+          <%= hidden_field_tag "template[questaos][#{index}][id]", questao[:id] %>
+        <% end %>
+        <div>
+          <%= label_tag "template_questaos_#{index}_enunciado", "Enunciado da questão:" %>
+          <%= text_area_tag "template[questaos][#{index}][enunciado]", questao[:enunciado], id: "template_questaos_#{index}_enunciado" %>
+        </div>
+        <div>
+          <%= label_tag "template_questaos_#{index}_tipo", "Tipo:" %>
+          <%= select_tag "template[questaos][#{index}][tipo]",
+                options_for_select([ [ "Nota (1-5)", "rating" ], [ "Texto", "text" ], [ "Sim/Não", "boolean" ] ], questao[:tipo]),
+                id: "template_questaos_#{index}_tipo" %>
+        </div>
+      </div>
+    <% end %>
   </div>
 
+  <%= submit_tag "+", name: "add_questao", data: { turbo: false } %>
+
   <div>
-    <%= form.submit %>
+    <%= form.submit(template.persisted? ? "Confirmar edição" : "Criar") %>
   </div>
 <% end %>

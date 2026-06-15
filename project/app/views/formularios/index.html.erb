@@ -1,16 +1,17 @@
 <p style="color: green"><%= notice %></p>
+<p style="color: red"><%= alert %></p>
 
-<% content_for :title, "Formularios" %>
+<% content_for :title, "Formulários" %>
 
-<h1>Formularios</h1>
+<h1>Formulários</h1>
 
 <div id="formularios">
   <% @formularios.each do |formulario| %>
     <%= render formulario %>
     <p>
-      <%= link_to "Show this formulario", formulario %>
+      <%= link_to "Ver formulário", formulario %>
     </p>
   <% end %>
 </div>
 
-<%= link_to "New formulario", new_formulario_path %>
+<%= link_to "Novo formulário", new_formulario_path(admin_id: current_admin&.id) %>

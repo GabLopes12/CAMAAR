@@ -1,11 +1,11 @@
-<% content_for :title, "New template" %>
+<% content_for :title, "Novo template" %>
 
-<h1>New template</h1>
+<h1>Novo template</h1>
 
-<%= render "form", template: @template %>
+<%= render "form", template: @template, questoes_attrs: @questoes_attrs %>
 
 <br>
 
 <div>
-  <%= link_to "Back to templates", templates_path %>
+  <%= link_to "Voltar para templates", templates_path(admin_id: current_admin&.id) %>
 </div>

@@ -1,47 +1,34 @@
 <%= form_with(model: formulario) do |form| %>
   <% if formulario.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(formulario.errors.count, "error") %> prohibited this formulario from being saved:</h2>
+    <div id="error_explanation" style="color: red">
+      <h2><%= pluralize(formulario.errors.count, "erro") %> impediu(ram) este formulário de ser salvo:</h2>
 
       <ul>
-        <% formulario.errors.each do |error| %>
-          <li><%= error.full_message %></li>
+        <% formulario.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
         <% end %>
       </ul>
     </div>
   <% end %>
 
+  <%= hidden_field_tag :admin_id, current_admin&.id %>
+
   <div>
-    <%= form.label :title, style: "display: block" %>
+    <%= form.label :title, "Nome do formulário:" %>
     <%= form.text_field :title %>
   </div>
 
   <div>
-    <%= form.label :target_role, style: "display: block" %>
-    <%= form.text_field :target_role %>
+    <%= form.label :template_id, "Template:" %>
+    <%= form.collection_select :template_id, @templates, :id, :title, include_blank: "Selecione um template" %>
   </div>
 
   <div>
-    <%= form.label :status, style: "display: block" %>
-    <%= form.text_field :status %>
+    <%= form.label :turma_id, "Turma:" %>
+    <%= form.collection_select :turma_id, @turmas, :id, :subject_name, include_blank: "Selecione uma turma" %>
   </div>
 
   <div>
-    <%= form.label :template_id, style: "display: block" %>
-    <%= form.text_field :template_id %>
-  </div>
-
-  <div>
-    <%= form.label :turma_id, style: "display: block" %>
-    <%= form.text_field :turma_id %>
-  </div>
-
-  <div>
-    <%= form.label :admin_id, style: "display: block" %>
-    <%= form.text_field :admin_id %>
-  </div>
-
-  <div>
-    <%= form.submit %>
+    <%= form.submit "Enviar" %>
   </div>
 <% end %>

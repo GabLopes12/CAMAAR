@@ -20,7 +20,7 @@ class FormulariosControllerTest < ActionDispatch::IntegrationTest
       post formularios_url, params: { formulario: { admin_id: @formulario.admin_id, status: @formulario.status, target_role: @formulario.target_role, template_id: @formulario.template_id, title: @formulario.title, turma_id: @formulario.turma_id } }
     end
 
-    assert_redirected_to formulario_url(Formulario.last)
+    assert_redirected_to formularios_url
   end
 
   test "should show formulario" do

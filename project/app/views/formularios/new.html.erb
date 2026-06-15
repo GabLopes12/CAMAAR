@@ -1,11 +1,11 @@
-<% content_for :title, "New formulario" %>
+<% content_for :title, "Novo formulário" %>
 
-<h1>New formulario</h1>
+<h1>Novo formulário</h1>
 
 <%= render "form", formulario: @formulario %>
 
 <br>
 
 <div>
-  <%= link_to "Back to formularios", formularios_path %>
+  <%= link_to "Voltar para formulários", formularios_path(admin_id: current_admin&.id) %>
 </div>

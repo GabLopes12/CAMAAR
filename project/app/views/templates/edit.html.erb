@@ -1,12 +1,11 @@
-<% content_for :title, "Editing template" %>
+<% content_for :title, "Editar template" %>
 
-<h1>Editing template</h1>
+<h1>Editar template</h1>
 
-<%= render "form", template: @template %>
+<%= render "form", template: @template, questoes_attrs: @questoes_attrs %>
 
 <br>
 
 <div>
-  <%= link_to "Show this template", @template %> |
-  <%= link_to "Back to templates", templates_path %>
+  <%= link_to "Voltar para templates", templates_path(admin_id: current_admin&.id) %>
 </div>
