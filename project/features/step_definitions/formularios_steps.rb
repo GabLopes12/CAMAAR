@@ -21,7 +21,7 @@ end
 
 Quando("selecionar o template e a turma desejada") do
   select @template.title, from: "formulario[template_id]"
-  select @turma.subject_name, from: "formulario[turma_id]"
+  select @turma.name, from: "formulario[course_class_id]"
 end
 
 Quando("clicar no botão 'Enviar'") do
@@ -53,7 +53,7 @@ end
 
 Quando("eu tentar criar um formulário sem selecionar nenhum template") do
   fill_in "formulario[title]", with: "Formulário sem template"
-  select @turma.subject_name, from: "formulario[turma_id]"
+  select @turma.name, from: "formulario[course_class_id]"
   click_button "Enviar"
 end
 

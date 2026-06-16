@@ -3,25 +3,20 @@ class FormulariosController < ApplicationController
   before_action :set_formulario, only: %i[ show edit update destroy exportar_csv ]
   before_action :set_select_options, only: %i[ new create edit update ]
 
-  # GET /formularios or /formularios.json
   def index
     @formularios = current_admin.formularios
   end
 
-  # GET /formularios/1 or /formularios/1.json
   def show
   end
 
-  # GET /formularios/new
   def new
     @formulario = Formulario.new
   end
 
-  # GET /formularios/1/edit
   def edit
   end
 
-  # POST /formularios or /formularios.json
   def create
     @formulario = Formulario.new(formulario_params)
     @formulario.target_role ||= @formulario.template&.target_role
@@ -36,7 +31,6 @@ class FormulariosController < ApplicationController
     end
   end
 
-  # PATCH/PUT /formularios/1 or /formularios/1.json
   def update
     respond_to do |format|
       if @formulario.update(formulario_params)
@@ -49,43 +43,38 @@ class FormulariosController < ApplicationController
     end
   end
 
-  # DELETE /formularios/1 or /formularios/1.json
   def destroy
     @formulario.destroy!
-
     respond_to do |format|
       format.html { redirect_to formularios_path, notice: "Formulario was successfully destroyed.", status: :see_other }
       format.json { head :no_content }
     end
   end
 
-  # GET /formularios/1/exportar_csv
   def exportar_csv
     require 'csv'
-
     csv_data = CSV.generate(headers: true) do |csv|
       csv << ["ID da Pergunta", "Enunciado", "Scores Atribuídos"]
-
     end
-
     send_data csv_data,
               filename: "respostas_formulario_#{@formulario.id}.csv",
               type: "text/csv"
   end
 
   private
-    def set_formulario
-      @formulario = Formulario.find(params.expect(:id))
-    end
 
-    def formulario_params
-      attrs = params.expect(formulario: [ :title, :target_role, :status, :template_id, :turma_id ])
-      attrs[:admin_id] = current_admin.id
-      attrs
-    end
+  def set_formulario
+    @formulario = Formulario.find(params.expect(:id))
+  end
 
-    def set_select_options
-      @templates = current_admin.templates
-      @turmas = Turma.all
-    end
+  def formulario_params
+    attrs = params.expect(formulario: [ :title, :target_role, :status, :template_id, :course_class_id ])
+    attrs[:admin_id] = current_admin.id
+    attrs
+  end
+
+  def set_select_options
+    @templates = current_admin.templates
+    @course_classes = CourseClass.all
+  end
 end

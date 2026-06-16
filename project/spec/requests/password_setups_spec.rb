@@ -2,11 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Definicao de senha" do
   let(:user) do
-    create_user(
-      name: "Ana Clara Jordao Perna",
-      email: "acjpjvjp@gmail.com",
-      registration: "190084006"
-    )
+    create(:user, name: "Ana Clara Jordao Perna", email: "acjpjvjp@gmail.com", registration: "190084006", password: nil)
   end
 
   it "define a primeira senha com link valido e permite login" do

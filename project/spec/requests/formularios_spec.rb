@@ -20,12 +20,12 @@ RSpec.describe "Formularios", type: :request do
       admin = create(:user, :admin)
       template = create(:template, admin: admin)
       create(:questao, template: template, enunciado: "O professor foi claro?")
-      turma = create(:turma)
+      course_class = create(:course_class)
 
       login_as(admin)
       expect {
         post formularios_path, params: {
-          formulario: { title: "Avaliação do Semestre", template_id: template.id, turma_id: turma.id }
+          formulario: { title: "Avaliação do Semestre", template_id: template.id, course_class_id: course_class.id }
         }
       }.to change(Formulario, :count).by(1).and change(Questao, :count).by(1)
 
@@ -41,12 +41,12 @@ RSpec.describe "Formularios", type: :request do
 
     it "não cria o formulário quando nenhum template é selecionado" do
       admin = create(:user, :admin)
-      turma = create(:turma)
+      course_class = create(:course_class)
 
       login_as(admin)
       expect {
         post formularios_path, params: {
-          formulario: { title: "Sem template", turma_id: turma.id }
+          formulario: { title: "Sem template", course_class_id: course_class.id }
         }
       }.not_to change(Formulario, :count)
 

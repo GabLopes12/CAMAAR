@@ -6,7 +6,7 @@ Dado("que eu editei informações de um template existente") do
 
   # Formulário gerado a partir da versão ATUAL do template, com questões já clonadas.
   turma = criar_turma
-  @formulario = @admin.formularios.create!(title: "Formulário Antigo", template_id: @template.id, turma_id: turma.id, target_role: @template.target_role)
+  @formulario = @admin.formularios.create!(title: "Formulário Antigo", template_id: @template.id, course_class_id: turma.id, target_role: @template.target_role)
   @template.questaos.each do |questao|
     @formulario.questaos.create!(enunciado: questao.enunciado, tipo: questao.tipo)
   end
@@ -38,7 +38,7 @@ Dado("que eu escolhi um template na minha lista") do
   @template = criar_template_com_questao(@admin)
 
   turma = criar_turma
-  @formulario = @admin.formularios.create!(title: "Formulário Gerado", template_id: @template.id, turma_id: turma.id, target_role: @template.target_role)
+  @formulario = @admin.formularios.create!(title: "Formulário Gerado", template_id: @template.id, course_class_id: turma.id, target_role: @template.target_role)
   @template.questaos.each do |questao|
     @formulario.questaos.create!(enunciado: questao.enunciado, tipo: questao.tipo)
   end

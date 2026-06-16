@@ -2,7 +2,6 @@
   <% if formulario.errors.any? %>
     <div id="error_explanation" style="color: red">
       <h2><%= pluralize(formulario.errors.count, "erro") %> impediu(ram) este formulário de ser salvo:</h2>
-
       <ul>
         <% formulario.errors.full_messages.each do |message| %>
           <li><%= message %></li>
@@ -22,8 +21,8 @@
   </div>
 
   <div>
-    <%= form.label :turma_id, "Turma:" %>
-    <%= form.collection_select :turma_id, @turmas, :id, :subject_name, include_blank: "Selecione uma turma" %>
+    <%= form.label :course_class_id, "Turma:" %>
+    <%= form.collection_select :course_class_id, @course_classes, :id, :name, include_blank: "Selecione uma turma" %>
   </div>
 
   <div>

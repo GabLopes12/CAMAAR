@@ -10,28 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_16_000001) do
-  create_table "admins", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.integer "departamento_id", null: false
-    t.string "email"
-    t.string "name"
-    t.string "password_digest"
-    t.datetime "updated_at", null: false
-    t.string "username"
-    t.index ["departamento_id"], name: "index_admins_on_departamento_id"
-  end
-
-  create_table "alunos", force: :cascade do |t|
-    t.string "course"
-    t.datetime "created_at", null: false
-    t.string "email"
-    t.string "matricula"
-    t.string "name"
-    t.string "password_digest"
-    t.datetime "updated_at", null: false
-  end
-
+ActiveRecord::Schema[8.1].define(version: 2026_06_16_000002) do
   create_table "class_memberships", force: :cascade do |t|
     t.integer "course_class_id", null: false
     t.datetime "created_at", null: false
@@ -50,16 +29,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_16_000001) do
     t.integer "department_id", null: false
     t.string "name"
     t.string "semester", null: false
+    t.string "time"
     t.datetime "updated_at", null: false
     t.index ["code", "class_code", "semester"], name: "index_course_classes_on_code_and_class_code_and_semester", unique: true
     t.index ["department_id"], name: "index_course_classes_on_department_id"
-  end
-
-  create_table "departamentos", force: :cascade do |t|
-    t.string "code"
-    t.datetime "created_at", null: false
-    t.string "name"
-    t.datetime "updated_at", null: false
   end
 
   create_table "departments", force: :cascade do |t|
@@ -72,16 +45,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_16_000001) do
 
   create_table "formularios", force: :cascade do |t|
     t.integer "admin_id", null: false
+    t.integer "course_class_id", null: false
     t.datetime "created_at", null: false
     t.string "status"
     t.string "target_role"
     t.integer "template_id"
     t.string "title"
-    t.integer "turma_id", null: false
     t.datetime "updated_at", null: false
     t.index ["admin_id"], name: "index_formularios_on_admin_id"
+    t.index ["course_class_id"], name: "index_formularios_on_course_class_id"
     t.index ["template_id"], name: "index_formularios_on_template_id"
-    t.index ["turma_id"], name: "index_formularios_on_turma_id"
   end
 
   create_table "import_inconsistencies", force: :cascade do |t|
@@ -90,18 +63,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_16_000001) do
     t.json "payload"
     t.string "source", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "professors", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.integer "departamento_id", null: false
-    t.string "email"
-    t.string "formation"
-    t.string "matricula"
-    t.string "name"
-    t.string "password_digest"
-    t.datetime "updated_at", null: false
-    t.index ["departamento_id"], name: "index_professors_on_departamento_id"
   end
 
   create_table "questaos", force: :cascade do |t|
@@ -129,11 +90,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_16_000001) do
   create_table "submissaos", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "formulario_id", null: false
-    t.integer "participant_id", null: false
-    t.string "participant_type", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
     t.index ["formulario_id"], name: "index_submissaos_on_formulario_id"
-    t.index ["participant_type", "participant_id"], name: "index_submissaos_on_participant"
+    t.index ["user_id"], name: "index_submissaos_on_user_id"
   end
 
   create_table "templates", force: :cascade do |t|
@@ -143,29 +103,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_16_000001) do
     t.string "title"
     t.datetime "updated_at", null: false
     t.index ["admin_id"], name: "index_templates_on_admin_id"
-  end
-
-  create_table "turma_alunos", force: :cascade do |t|
-    t.integer "aluno_id", null: false
-    t.datetime "created_at", null: false
-    t.integer "turma_id", null: false
-    t.datetime "updated_at", null: false
-    t.index ["aluno_id"], name: "index_turma_alunos_on_aluno_id"
-    t.index ["turma_id"], name: "index_turma_alunos_on_turma_id"
-  end
-
-  create_table "turmas", force: :cascade do |t|
-    t.string "class_code"
-    t.datetime "created_at", null: false
-    t.integer "departamento_id", null: false
-    t.integer "professor_id", null: false
-    t.string "semester"
-    t.string "subject_code"
-    t.string "subject_name"
-    t.string "time"
-    t.datetime "updated_at", null: false
-    t.index ["departamento_id"], name: "index_turmas_on_departamento_id"
-    t.index ["professor_id"], name: "index_turmas_on_professor_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -188,23 +125,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_16_000001) do
     t.index ["registration"], name: "index_users_on_registration", unique: true
   end
 
-  add_foreign_key "admins", "departamentos"
   add_foreign_key "class_memberships", "course_classes"
   add_foreign_key "class_memberships", "users"
   add_foreign_key "course_classes", "departments"
+  add_foreign_key "formularios", "course_classes"
   add_foreign_key "formularios", "templates"
-  add_foreign_key "formularios", "turmas"
   add_foreign_key "formularios", "users", column: "admin_id"
-  add_foreign_key "professors", "departamentos"
   add_foreign_key "questaos", "formularios"
   add_foreign_key "questaos", "templates"
   add_foreign_key "resposta", "questaos"
   add_foreign_key "resposta", "submissaos"
   add_foreign_key "submissaos", "formularios"
+  add_foreign_key "submissaos", "users"
   add_foreign_key "templates", "users", column: "admin_id"
-  add_foreign_key "turma_alunos", "alunos"
-  add_foreign_key "turma_alunos", "turmas"
-  add_foreign_key "turmas", "departamentos"
-  add_foreign_key "turmas", "professors"
   add_foreign_key "users", "departments"
 end

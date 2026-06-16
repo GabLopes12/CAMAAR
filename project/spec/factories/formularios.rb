@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :formulario do
     association :admin, factory: %i[user admin]
     template
-    turma
+    association :course_class
     sequence(:title) { |n| "Formulário de Teste #{n}" }
     target_role { "discente" }
 

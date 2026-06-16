@@ -2,18 +2,9 @@ require "rails_helper"
 
 RSpec.describe "Login" do
   before do
-    create_admin
-    create_user(
-      name: "Ana Clara Jordao Perna",
-      email: "acjpjvjp@gmail.com",
-      registration: "190084006",
-      password: "Senha@123"
-    )
-    create_user(
-      name: "Andre Carvalho de Roure",
-      email: "andreCarvalhoroure@gmail.com",
-      registration: "200033522"
-    )
+    create(:user, :admin, name: "Admin CIC", email: "admin.cic@unb.br", registration: "000000001")
+    create(:user, name: "Ana Clara Jordao Perna", email: "acjpjvjp@gmail.com", registration: "190084006", password: "Senha@123")
+    create(:user, name: "Andre Carvalho de Roure", email: "andreCarvalhoroure@gmail.com", registration: "200033522", password: nil)
   end
 
   it "autentica administrador com email e exibe menu administrativo" do

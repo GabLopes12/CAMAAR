@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe Sigaa::ClassMembersImporter do
-  let!(:admin) { create_admin }
+  let!(:admin) { create(:user, :admin) }
   let(:path) { Rails.root.join("tmp", "spec_class_members.json") }
 
   after do
@@ -39,12 +39,8 @@ RSpec.describe Sigaa::ClassMembersImporter do
   end
 
   it "nao duplica usuario ja cadastrado e mantem uma unica conta por matricula e email" do
-    create_user(
-      name: "Ana",
-      email: "acjpjvjp@gmail.com",
-      registration: "190084006",
-      password: "Senha@123"
-    )
+    create(:user, name: "Ana", email: "acjpjvjp@gmail.com", registration: "190084006", password: "Senha@123")
+
     write_import_file([
       {
         "code" => "CIC0097",

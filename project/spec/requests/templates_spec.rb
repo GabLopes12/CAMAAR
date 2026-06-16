@@ -115,9 +115,9 @@ RSpec.describe "Templates", type: :request do
       admin = create(:user, :admin)
       template = create(:template, admin: admin)
       create(:questao, template: template, enunciado: "Pergunta original")
-      turma = create(:turma)
+      course_class = create(:course_class)
 
-      formulario = create(:formulario, admin: admin, template: template, turma: turma, title: "Formulário Gerado", target_role: template.target_role)
+      formulario = create(:formulario, admin: admin, template: template, course_class: course_class, title: "Formulário Gerado", target_role: template.target_role)
       template.questaos.each { |questao| formulario.questaos.create!(enunciado: questao.enunciado, tipo: questao.tipo) }
 
       questao_existente = template.questaos.first
@@ -165,9 +165,9 @@ RSpec.describe "Templates", type: :request do
     it "remove o template, desvincula formulários gerados e mantém suas questões clonadas" do
       admin = create(:user, :admin)
       template = create(:template, :com_questao, admin: admin)
-      turma = create(:turma)
+      course_class = create(:course_class)
 
-      formulario = create(:formulario, admin: admin, template: template, turma: turma, title: "Formulário Gerado", target_role: template.target_role)
+      formulario = create(:formulario, admin: admin, template: template, course_class: course_class, title: "Formulário Gerado", target_role: template.target_role)
       template.questaos.each { |questao| formulario.questaos.create!(enunciado: questao.enunciado, tipo: questao.tipo) }
 
       login_as(admin)

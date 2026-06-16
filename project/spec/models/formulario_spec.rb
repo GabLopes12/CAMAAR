@@ -21,17 +21,17 @@ RSpec.describe Formulario, type: :model do
     end
 
     it "exige uma turma ao ser criado (#103)" do
-      formulario = build(:formulario, turma: nil)
+      formulario = build(:formulario, course_class: nil)
 
       expect(formulario).not_to be_valid
-      expect(formulario.errors[:turma_id]).to include("É necessário escolher ao menos uma turma")
+      expect(formulario.errors[:course_class_id]).to include("É necessário escolher ao menos uma turma")
     end
 
     it "não exige template nem turma em atualizações (#112)" do
       formulario = create(:formulario)
 
       formulario.template_id = nil
-      formulario.turma_id = nil
+      formulario.course_class_id = nil
 
       expect(formulario).to be_valid
     end
@@ -55,7 +55,7 @@ RSpec.describe Formulario, type: :model do
 
       expect(formulario.admin).to be_present
       expect(formulario.template).to be_present
-      expect(formulario.turma).to be_present
+      expect(formulario.course_class).to be_present
     end
 
     it "destrói suas próprias questões (clonadas do template) ao ser destruído" do

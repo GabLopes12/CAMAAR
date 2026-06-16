@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe UserMailer do
   it "envia link de definicao de senha" do
-    user = create_user(email: "acjpjvjp@gmail.com", registration: "190084006")
+    user = create(:user, email: "acjpjvjp@gmail.com", registration: "190084006", password: nil)
     email = described_class.password_setup(user, "token-123")
 
     expect(email.to).to include("acjpjvjp@gmail.com")
@@ -11,7 +11,7 @@ RSpec.describe UserMailer do
   end
 
   it "envia link de redefinicao de senha" do
-    user = create_user(email: "acjpjvjp@gmail.com", registration: "190084006", password: "Senha@123")
+    user = create(:user, email: "acjpjvjp@gmail.com", registration: "190084006", password: "Senha@123")
     email = described_class.password_reset(user, "token-123")
 
     expect(email.to).to include("acjpjvjp@gmail.com")

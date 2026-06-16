@@ -1,7 +1,6 @@
 module TestHelpers
   def criar_admin
     sufixo = SecureRandom.hex(4)
-
     User.create!(
       name: "Admin Teste #{sufixo}",
       email: "admin#{sufixo}@teste.com",
@@ -25,27 +24,15 @@ module TestHelpers
   end
 
   def criar_turma
-    departamento = Departamento.find_or_create_by!(code: "DEPT001") do |d|
-      d.name = "Departamento de Teste"
-    end
+    department = Department.find_or_create_by!(code: "DEPT001") { |d| d.name = "Departamento de Teste" }
     sufixo = SecureRandom.hex(4)
-
-    professor = Professor.create!(
-      name: "Professor Teste #{sufixo}",
-      email: "professor#{sufixo}@teste.com",
-      matricula: "PROF#{sufixo}",
-      password: "senha12345",
-      departamento_id: departamento.id
-    )
-
-    Turma.create!(
-      class_code: "TURMA#{sufixo}",
-      subject_code: "DISC#{sufixo}",
-      subject_name: "Disciplina Teste",
+    CourseClass.create!(
+      code: "CIC#{sufixo}",
+      class_code: "T#{sufixo}",
+      name: "Disciplina Teste #{sufixo}",
       semester: "2026.1",
       time: "10:00",
-      departamento_id: departamento.id,
-      professor_id: professor.id
+      department: department
     )
   end
 end

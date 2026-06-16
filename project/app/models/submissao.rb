@@ -1,4 +1,4 @@
 class Submissao < ApplicationRecord
   belongs_to :formulario
-  belongs_to :participant, polymorphic: true
+  belongs_to :user
 end

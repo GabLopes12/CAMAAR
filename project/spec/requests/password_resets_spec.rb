@@ -2,12 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Redefinicao de senha" do
   let!(:user) do
-    create_user(
-      name: "Ana Clara Jordao Perna",
-      email: "acjpjvjp@gmail.com",
-      registration: "190084006",
-      password: "Senha@123"
-    )
+    create(:user, name: "Ana Clara Jordao Perna", email: "acjpjvjp@gmail.com", registration: "190084006", password: "Senha@123")
   end
 
   it "redefine a senha com token valido e permite login com a nova senha" do
