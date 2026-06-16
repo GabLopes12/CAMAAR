@@ -5,6 +5,8 @@ class User < ApplicationRecord
   belongs_to :department, optional: true
   has_many :class_memberships, dependent: :destroy
   has_many :course_classes, through: :class_memberships
+  has_many :templates, foreign_key: :admin_id, dependent: :destroy
+  has_many :formularios, foreign_key: :admin_id, dependent: :destroy
 
   has_secure_password validations: false
 

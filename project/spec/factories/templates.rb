@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :template do
-    admin
+    association :admin, factory: %i[user admin]
     sequence(:title) { |n| "Template #{n}" }
     target_role { "discente" }
 

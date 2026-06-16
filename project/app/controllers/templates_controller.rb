@@ -1,10 +1,11 @@
 class TemplatesController < ApplicationController
+  before_action :require_admin!
   before_action :set_template, only: %i[ show edit update destroy ]
   before_action :authorize_template_access!, only: %i[ show edit update destroy ]
 
   # GET /templates or /templates.json
   def index
-    @templates = current_admin ? current_admin.templates : Template.all
+    @templates = current_admin.templates
   end
 
   # GET /templates/1 or /templates/1.json
@@ -13,7 +14,7 @@ class TemplatesController < ApplicationController
 
   # GET /templates/new
   def new
-    @template = Template.new(admin_id: current_admin&.id)
+    @template = Template.new
     @questoes_attrs = []
   end
 
@@ -83,26 +84,20 @@ class TemplatesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_template
       @template = Template.find(params.expect(:id))
     end
 
-    # Garante que o admin só acesse/edite/delete templates criados por ele.
     def authorize_template_access!
-      return if current_admin.nil? || @template.admin_id == current_admin.id
-
-      redirect_to templates_path, alert: "Você não tem acesso a esse template"
+      redirect_to templates_path, alert: "Você não tem acesso a esse template" unless @template.admin_id == current_admin.id
     end
 
-    # Only allow a list of trusted parameters through.
     def template_params
-      attrs = params.expect(template: [ :title, :target_role, :admin_id ])
-      attrs[:admin_id] = current_admin.id if current_admin
+      attrs = params.expect(template: [ :title, :target_role ])
+      attrs[:admin_id] = current_admin.id
       attrs
     end
 
-    # Extrai as questões enviadas via template[questaos][i][enunciado/tipo/id].
     def extract_questoes_attrs
       raw = params.dig(:template, :questaos)
       return [] unless raw

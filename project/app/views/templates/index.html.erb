@@ -13,11 +13,11 @@
       <p><strong>Questões:</strong> <%= template.questaos.count %></p>
 
       <div>
-        <%= link_to "Editar", edit_template_path(template, admin_id: current_admin&.id) %>
-        <%= link_to "Deletar", template_path(template, admin_id: current_admin&.id) %>
+        <%= link_to "Editar", edit_template_path(template) %>
+        <%= link_to "Deletar", template_path(template) %>
       </div>
     </div>
   <% end %>
 </div>
 
-<%= link_to "Novo template", new_template_path(admin_id: current_admin&.id) %>
+<%= link_to "Novo template", new_template_path %>

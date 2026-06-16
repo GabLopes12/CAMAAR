@@ -7,7 +7,8 @@ Dado("que o administrador está na interface de templates") do
   @outro_admin = criar_admin
   @template_outro_admin = criar_template_com_questao(@outro_admin, titulo: "Template de Outro Admin #{SecureRandom.hex(4)}")
 
-  visit templates_path(admin_id: @admin.id)
+  fazer_login_como(@admin)
+  visit templates_path
 end
 
 Quando("o sistema carrega os templates") do
@@ -25,7 +26,7 @@ Então("deverá ter a opção de deletar ou editar esses templates") do
 end
 
 Quando("ele tenta acessar diretamente um template criado por outro administrador") do
-  visit edit_template_path(@template_outro_admin, admin_id: @admin.id)
+  visit edit_template_path(@template_outro_admin)
 end
 
 Então("ele deverá ver uma mensagem de erro de permissão {string}") do |mensagem|

@@ -14,7 +14,8 @@ end
 
 Quando("eu preencher o nome do formulário") do
   @formulario_titulo = "Formulário Avaliação #{SecureRandom.hex(4)}"
-  visit new_formulario_path(admin_id: @admin.id)
+  fazer_login_como(@admin)
+  visit new_formulario_path
   fill_in "formulario[title]", with: @formulario_titulo
 end
 
@@ -46,7 +47,8 @@ end
 Dado("estou criando um formulário") do
   @template = criar_template_com_questao(@admin)
   @turma = criar_turma
-  visit new_formulario_path(admin_id: @admin.id)
+  fazer_login_como(@admin)
+  visit new_formulario_path
 end
 
 Quando("eu tentar criar um formulário sem selecionar nenhum template") do

@@ -1,20 +1,21 @@
 module TestHelpers
-  def departamento_de_teste
-    Departamento.find_or_create_by!(code: "DEPT001") do |departamento|
-      departamento.name = "Departamento de Teste"
-    end
-  end
-
   def criar_admin
-    departamento = departamento_de_teste
     sufixo = SecureRandom.hex(4)
 
-    Admin.create!(
+    User.create!(
       name: "Admin Teste #{sufixo}",
       email: "admin#{sufixo}@teste.com",
-      username: "admin#{sufixo}",
-      departamento_id: departamento.id
+      registration: "ADM#{sufixo}",
+      role: :admin,
+      password: "Senha@123"
     )
+  end
+
+  def fazer_login_como(user, password: "Senha@123")
+    visit login_path
+    fill_in "Email ou matricula", with: user.email
+    fill_in "Senha", with: password
+    click_button "Entrar"
   end
 
   def criar_template_com_questao(admin, titulo: "Template #{SecureRandom.hex(4)}", target_role: "discente", enunciado: "Qual é a resposta correta?")
@@ -24,7 +25,9 @@ module TestHelpers
   end
 
   def criar_turma
-    departamento = departamento_de_teste
+    departamento = Departamento.find_or_create_by!(code: "DEPT001") do |d|
+      d.name = "Departamento de Teste"
+    end
     sufixo = SecureRandom.hex(4)
 
     professor = Professor.create!(

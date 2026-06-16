@@ -16,14 +16,14 @@
 </ul>
 
 <div>
-  <%= link_to "Editar", edit_template_path(@template, admin_id: current_admin&.id) %>
+  <%= link_to "Editar", edit_template_path(@template) %>
 </div>
 
 <div>
   <p>Tem certeza que deseja deletar este template?</p>
-  <%= button_to "Confirmar", template_path(@template, admin_id: current_admin&.id), method: :delete %>
+  <%= button_to "Confirmar", template_path(@template), method: :delete %>
 </div>
 
 <div>
-  <%= link_to "Voltar para templates", templates_path(admin_id: current_admin&.id) %>
+  <%= link_to "Voltar para templates", templates_path %>
 </div>

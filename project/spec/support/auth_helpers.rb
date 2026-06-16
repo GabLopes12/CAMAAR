@@ -23,6 +23,10 @@ module AuthHelpers
       password: "Senha@123"
     )
   end
+
+  def login_as(user, password: "Senha@123")
+    post login_path, params: { session: { identifier: user.email, password: } }
+  end
 end
 
 RSpec.configure do |config|

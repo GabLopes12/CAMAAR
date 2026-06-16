@@ -9,15 +9,12 @@ class ApplicationController < ActionController::Base
 
   private
 
-  def current_admin
-    return @current_admin if defined?(@current_admin)
-
-    session[:admin_id] = params[:admin_id] if params[:admin_id].present?
-    @current_admin = Admin.find_by(id: session[:admin_id]) || Admin.first
-  end
-
   def current_user
     @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id].present?
+  end
+
+  def current_admin
+    current_user&.admin? ? current_user : nil
   end
 
   def user_signed_in?
@@ -26,6 +23,10 @@ class ApplicationController < ActionController::Base
 
   def require_login
     redirect_to login_path, alert: "Faca login para continuar" unless user_signed_in?
+  end
+
+  def require_admin!
+    redirect_to login_path, alert: "Acesso restrito a administradores" unless current_admin
   end
 
   def require_admin

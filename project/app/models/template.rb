@@ -1,5 +1,5 @@
 class Template < ApplicationRecord
-  belongs_to :admin
+  belongs_to :admin, class_name: "User"
   has_many :questaos, dependent: :destroy
   has_many :formularios, dependent: :nullify
 

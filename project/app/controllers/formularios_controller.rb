@@ -1,10 +1,11 @@
 class FormulariosController < ApplicationController
+  before_action :require_admin!
   before_action :set_formulario, only: %i[ show edit update destroy exportar_csv ]
   before_action :set_select_options, only: %i[ new create edit update ]
 
   # GET /formularios or /formularios.json
   def index
-    @formularios = current_admin ? current_admin.formularios : Formulario.all
+    @formularios = current_admin.formularios
   end
 
   # GET /formularios/1 or /formularios/1.json
@@ -13,7 +14,7 @@ class FormulariosController < ApplicationController
 
   # GET /formularios/new
   def new
-    @formulario = Formulario.new(admin_id: current_admin&.id)
+    @formulario = Formulario.new
   end
 
   # GET /formularios/1/edit
@@ -61,33 +62,30 @@ class FormulariosController < ApplicationController
   # GET /formularios/1/exportar_csv
   def exportar_csv
     require 'csv'
-    
+
     csv_data = CSV.generate(headers: true) do |csv|
       csv << ["ID da Pergunta", "Enunciado", "Scores Atribuídos"]
-      
+
     end
 
-    send_data csv_data, 
-              filename: "respostas_formulario_#{@formulario.id}.csv", 
+    send_data csv_data,
+              filename: "respostas_formulario_#{@formulario.id}.csv",
               type: "text/csv"
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_formulario
       @formulario = Formulario.find(params.expect(:id))
     end
 
-    # Only allow a list of trusted parameters through.
     def formulario_params
-      attrs = params.expect(formulario: [ :title, :target_role, :status, :template_id, :turma_id, :admin_id ])
-      attrs[:admin_id] = current_admin.id if current_admin
+      attrs = params.expect(formulario: [ :title, :target_role, :status, :template_id, :turma_id ])
+      attrs[:admin_id] = current_admin.id
       attrs
     end
 
-    # Opções disponíveis para os selects de template e turma do formulário.
     def set_select_options
-      @templates = current_admin ? current_admin.templates : Template.all
+      @templates = current_admin.templates
       @turmas = Turma.all
     end
 end

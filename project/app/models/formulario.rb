@@ -3,7 +3,7 @@ class Formulario < ApplicationRecord
   # de origem; o formulário e suas questões clonadas permanecem intactos.
   belongs_to :template, optional: true
   belongs_to :turma, optional: true
-  belongs_to :admin
+  belongs_to :admin, class_name: "User"
   has_many :questaos, dependent: :destroy
 
   validates :title, presence: { message: "O nome do formulário é obrigatório" }

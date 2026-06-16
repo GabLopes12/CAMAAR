@@ -3,7 +3,8 @@
 
 Dado("que estou na página de criar template") do
   @admin = criar_admin
-  visit new_template_path(admin_id: @admin.id)
+  fazer_login_como(@admin)
+  visit new_template_path
 end
 
 Quando("eu preencho o campo 'Nome do template:'") do

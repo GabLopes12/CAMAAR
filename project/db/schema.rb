@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_15_000500) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_16_000001) do
   create_table "admins", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "departamento_id", null: false
@@ -192,16 +192,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_15_000500) do
   add_foreign_key "class_memberships", "course_classes"
   add_foreign_key "class_memberships", "users"
   add_foreign_key "course_classes", "departments"
-  add_foreign_key "formularios", "admins"
   add_foreign_key "formularios", "templates"
   add_foreign_key "formularios", "turmas"
+  add_foreign_key "formularios", "users", column: "admin_id"
   add_foreign_key "professors", "departamentos"
   add_foreign_key "questaos", "formularios"
   add_foreign_key "questaos", "templates"
   add_foreign_key "resposta", "questaos"
   add_foreign_key "resposta", "submissaos"
   add_foreign_key "submissaos", "formularios"
-  add_foreign_key "templates", "admins"
+  add_foreign_key "templates", "users", column: "admin_id"
   add_foreign_key "turma_alunos", "alunos"
   add_foreign_key "turma_alunos", "turmas"
   add_foreign_key "turmas", "departamentos"

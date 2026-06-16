@@ -14,7 +14,8 @@ Dado("que eu editei informações de um template existente") do
 
   @novo_titulo = "Template Editado #{SecureRandom.hex(4)}"
 
-  visit edit_template_path(@template, admin_id: @admin.id)
+  fazer_login_como(@admin)
+  visit edit_template_path(@template)
   fill_in "template[title]", with: @novo_titulo
 end
 
@@ -43,7 +44,8 @@ Dado("que eu escolhi um template na minha lista") do
   end
 
   @template_title = @template.title
-  visit templates_path(admin_id: @admin.id)
+  fazer_login_como(@admin)
+  visit templates_path
 end
 
 Quando("eu pressionar o botão de {string}") do |texto|
@@ -68,7 +70,8 @@ end
 Dado("que estou na página de edição do template") do
   @admin = criar_admin
   @template = criar_template_com_questao(@admin)
-  visit edit_template_path(@template, admin_id: @admin.id)
+  fazer_login_como(@admin)
+  visit edit_template_path(@template)
 end
 
 Quando("eu clico no botão '+'") do

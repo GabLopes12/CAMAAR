@@ -3,11 +3,12 @@ require 'rails_helper'
 RSpec.describe "Formularios", type: :request do
   describe "GET /formularios/:id/exportar_csv" do
     it "retorna um arquivo CSV de sucesso com as respostas da avaliação" do
-      formulario = create(:formulario)
+      admin = create(:user, :admin)
+      formulario = create(:formulario, admin: admin)
 
+      login_as(admin)
       get exportar_csv_formulario_path(formulario, format: :csv)
 
-      # Validações
       expect(response).to have_http_status(:success)
       expect(response.media_type).to eq('text/csv')
       expect(response.body).to include("ID da Pergunta", "Enunciado")
@@ -16,14 +17,14 @@ RSpec.describe "Formularios", type: :request do
 
   describe "POST /formularios" do
     it "cria um formulário a partir de um template e clona as questões do template" do
-      admin = create(:admin)
+      admin = create(:user, :admin)
       template = create(:template, admin: admin)
       create(:questao, template: template, enunciado: "O professor foi claro?")
       turma = create(:turma)
 
+      login_as(admin)
       expect {
         post formularios_path, params: {
-          admin_id: admin.id,
           formulario: { title: "Avaliação do Semestre", template_id: template.id, turma_id: turma.id }
         }
       }.to change(Formulario, :count).by(1).and change(Questao, :count).by(1)
@@ -39,12 +40,12 @@ RSpec.describe "Formularios", type: :request do
     end
 
     it "não cria o formulário quando nenhum template é selecionado" do
-      admin = create(:admin)
+      admin = create(:user, :admin)
       turma = create(:turma)
 
+      login_as(admin)
       expect {
         post formularios_path, params: {
-          admin_id: admin.id,
           formulario: { title: "Sem template", turma_id: turma.id }
         }
       }.not_to change(Formulario, :count)
@@ -54,12 +55,12 @@ RSpec.describe "Formularios", type: :request do
     end
 
     it "não cria o formulário quando nenhuma turma é selecionada" do
-      admin = create(:admin)
+      admin = create(:user, :admin)
       template = create(:template, :com_questao, admin: admin)
 
+      login_as(admin)
       expect {
         post formularios_path, params: {
-          admin_id: admin.id,
           formulario: { title: "Sem turma", template_id: template.id }
         }
       }.not_to change(Formulario, :count)
