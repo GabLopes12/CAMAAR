@@ -5,7 +5,7 @@
 <aside aria-label="Menu lateral">
   <% if current_user.admin? %>
     <nav>
-      <%= link_to "Importacao de Dados do SIGAA", imports_sigaa_path %>
+      <%= button_to "Importar participantes do SIGAA", imports_class_members_path %>
       <%= link_to "Gerenciar templates", templates_path %>
       <%= link_to "Gerenciar formularios", formularios_path %>
       <a href="#">Resultados</a>

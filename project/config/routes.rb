@@ -28,7 +28,6 @@ Rails.application.routes.draw do
   patch "senha/redefinir/:token", to: "password_resets#update", as: :password_reset
 
   namespace :imports do
-    get "sigaa", to: "sigaa#new"
-    post "sigaa", to: "sigaa#create"
+    post "class_members", to: "class_members#create"
   end
 end
