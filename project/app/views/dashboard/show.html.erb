@@ -6,13 +6,13 @@
   <% if current_user.admin? %>
     <nav>
       <%= button_to "Importar participantes do SIGAA", imports_class_members_path %>
-      <a href="#">Gerenciar templates</a>
-      <a href="#">Gerenciar formularios</a>
+      <%= link_to "Gerenciar templates", templates_path %>
+      <%= link_to "Gerenciar formularios", formularios_path %>
       <a href="#">Resultados</a>
     </nav>
   <% else %>
     <nav>
-      <a href="#">Formularios pendentes</a>
+      <%= link_to "Formularios pendentes", formularios_path %>
     </nav>
   <% end %>
 </aside>
