@@ -27,7 +27,7 @@ RSpec.describe Sigaa::ClassMembersImporter do
     result = described_class.new(path:, imported_by: admin).call
 
     user = User.find_by!(registration: "190084006")
-    expect(result.created_users).to eq(1)
+    expect(result.created_count).to eq(2)
     expect(user.name).to eq("Ana Clara Jordao Perna")
     expect(user.email).to eq("acjpjvjp@gmail.com")
     expect(user).to be_pending_password_setup
