@@ -11,10 +11,10 @@ module Imports
       result = Sigaa::DataSynchronizer.new(semester: sync_params[:semester], imported_by: current_user).call
 
       if result.already_up_to_date?
-        redirect_to imports_sigaa_path, notice: "A base de dados ja esta atualizada com o SIGAA para este periodo."
+        redirect_to imports_sigaa_path, notice: "A base de dados já está atualizada com o SIGAA para este período."
       else
         redirect_to imports_sigaa_path,
-          notice: "Sincronizacao concluida. #{result.created_count} novos registros adicionados e #{result.updated_count} registros atualizados."
+          notice: "Sincronização concluída. #{result.created_count} novos registros adicionados e #{result.updated_count} registros atualizados."
       end
     end
 

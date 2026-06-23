@@ -1,0 +1,9 @@
+<%= render "shared/flash" %>
+
+<% content_for :title, @course_class.name %>
+
+<h1><%= @course_class.name %></h1>
+<p><strong>Departamento:</strong> <%= @course_class.department.name %></p>
+<p><strong>Semestre:</strong> <%= @course_class.semester %></p>
+
+<%= link_to "Voltar para Gerenciamento de Turmas", course_classes_path %>

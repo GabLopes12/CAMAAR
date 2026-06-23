@@ -1,0 +1,23 @@
+<%= render "shared/flash" %>
+
+<% content_for :title, "Gerenciamento de Turmas" %>
+
+<h1>Gerenciamento de Turmas</h1>
+
+<% if @course_classes.empty? %>
+  <p>Nenhuma turma encontrada para o seu departamento no semestre atual.</p>
+<% else %>
+  <div id="turmas">
+    <% @course_classes.each do |course_class| %>
+      <div class="turma" style="margin: 10px 0; padding: 10px; border: 1px solid #ccc;">
+        <h3><%= course_class.name %></h3>
+        <p><strong>Departamento:</strong> <%= course_class.department.name %></p>
+        <p><strong>Semestre:</strong> <%= course_class.semester %></p>
+
+        <%= link_to "Avaliar desempenho", course_class_path(course_class) %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<%= link_to "Voltar ao painel", root_path %>

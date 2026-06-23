@@ -74,10 +74,6 @@ Dado("que estou na página de edição do template") do
   visit edit_template_path(@template)
 end
 
-Quando("eu clico no botão '+'") do
-  click_button "+"
-end
-
 Quando("clico no botão 'Confirmar edição'") do
   click_button "Confirmar edição"
 end

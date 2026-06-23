@@ -11,6 +11,8 @@ Rails.application.routes.draw do
 
   resources :templates
 
+  resources :course_classes, only: %i[ index show ], path: "turmas"
+
   get "up" => "rails/health#show", as: :rails_health_check
 
   root "dashboard#show"
