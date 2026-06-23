@@ -64,7 +64,9 @@ module Sigaa
 
     def department_for(code)
       department_code = imported_by&.department&.code || code.to_s[/\A[A-Za-z]+/]&.upcase || "GERAL"
-      Department.find_or_create_by!(code: department_code) { |department| department.name = department_code }
+      department = Department.find_or_create_by!(code: department_code) { |dept| dept.name = department_code }
+      imported_by.update!(department:) if imported_by && imported_by.department_id.nil?
+      department
     end
 
     def members_for(class_payload)

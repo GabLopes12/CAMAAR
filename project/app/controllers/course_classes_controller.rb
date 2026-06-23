@@ -10,7 +10,10 @@ class CourseClassesController < ApplicationController
 
     if @course_class.department_id != current_admin.department_id
       redirect_to course_classes_path, alert: "Acesso negado. Você só pode gerenciar turmas do seu próprio departamento."
+      return
     end
+
+    @formularios = Formulario.where(course_class: @course_class)
   end
 
   private

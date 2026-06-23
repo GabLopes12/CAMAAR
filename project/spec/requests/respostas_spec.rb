@@ -2,44 +2,65 @@ require 'rails_helper'
 
 RSpec.describe "Respostas", type: :request do
   describe "POST /resposta" do
-    it "cria uma nova resposta mapeando a nota corretamente para o atributo do banco" do
+    it "cria uma submissão com uma resposta por questão do formulário" do
       user = create(:user)
       formulario = create(:formulario)
-      questao = create(:questao, :de_formulario, formulario: formulario)
+      questao_rating = create(:questao, :de_formulario, formulario: formulario, tipo: "rating")
+      questao_texto = create(:questao, :de_formulario, formulario: formulario, tipo: "text")
 
       login_as(user)
 
       parametros = {
         respostum: {
-          valor_numerico: 10,
-          valor_texto: "Ótima aula",
           formulario_id: formulario.id,
-          questao_id: questao.id
+          respostas: {
+            questao_rating.id.to_s => { valor: "5" },
+            questao_texto.id.to_s => { valor: "Ótima aula" }
+          }
         }
       }
 
       expect {
         post "/resposta", params: parametros
-      }.to change(Respostum, :count).by(1)
+      }.to change(Respostum, :count).by(2).and change(Submissao, :count).by(1)
 
-      expect(response).to be_redirect
+      expect(response).to redirect_to(formularios_path)
 
-      nova_resposta = Respostum.last
-      expect(nova_resposta.valor_numerico).to eq(10)
+      submissao = Submissao.find_by(user: user, formulario: formulario)
+      expect(submissao.respostas.find_by(questao: questao_rating).valor_numerico).to eq(5)
+      expect(submissao.respostas.find_by(questao: questao_texto).valor_texto).to eq("Ótima aula")
     end
 
-    it "não cria a resposta quando a nota é deixada em branco" do
+    it "mapeia resposta booleana para o valor numérico enviado" do
       user = create(:user)
       formulario = create(:formulario)
-      questao = create(:questao, :de_formulario, formulario: formulario)
+      questao = create(:questao, :de_formulario, formulario: formulario, tipo: "boolean")
+
+      login_as(user)
+
+      post "/resposta", params: {
+        respostum: { formulario_id: formulario.id, respostas: { questao.id.to_s => { valor: "1" } } }
+      }
+
+      submissao = Submissao.find_by(user: user, formulario: formulario)
+      expect(submissao.respostas.find_by(questao: questao).valor_numerico).to eq(1)
+    end
+
+    it "não cria nenhuma resposta quando uma questão é deixada em branco" do
+      user = create(:user)
+      formulario = create(:formulario)
+      questao_um = create(:questao, :de_formulario, formulario: formulario, tipo: "rating")
+      questao_dois = create(:questao, :de_formulario, formulario: formulario, tipo: "text")
 
       login_as(user)
 
       parametros = {
         respostum: {
-          valor_numerico: "",
           formulario_id: formulario.id,
-          questao_id: questao.id
+          respostas: {
+            questao_um.id.to_s => { valor: "5" },
+            questao_dois.id.to_s => { valor: "" }
+          }
         }
       }
 

@@ -104,11 +104,24 @@ E('que estou na página do formulário não respondido da minha turma') do
 end
 
 Quando('eu preencho todas as avaliações corretamente') do
-  fill_in 'Score', with: '10' 
+  @formulario.questaos.each do |questao|
+    campo = "respostum[respostas][#{questao.id}][valor]"
+
+    case questao.tipo
+    when "boolean"
+      choose(campo, option: "1")
+    when "rating"
+      fill_in campo, with: "5"
+    else
+      fill_in campo, with: "Ótima turma"
+    end
+  end
 end
 
 Quando('eu deixo questões obrigatórias em branco') do
-  fill_in 'Score', with: '' 
+  questao = @formulario.questaos.first
+  campo = "respostum[respostas][#{questao.id}][valor]"
+  fill_in campo, with: '' unless questao.tipo == "boolean"
 end
 
 E('clico no botão de submeter avaliação') do
