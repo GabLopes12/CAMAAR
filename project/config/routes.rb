@@ -1,9 +1,7 @@
 Rails.application.routes.draw do
-  resources :resposta
-  resources :submissaos
-  resources :questaos
+  resources :resposta, only: %i[ create ]
 
-  resources :formularios do
+  resources :formularios, only: %i[ index show new create ] do
     member do
       get :exportar_csv
     end
