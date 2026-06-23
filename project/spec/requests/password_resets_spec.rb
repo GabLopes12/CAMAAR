@@ -41,7 +41,7 @@ RSpec.describe "Redefinicao de senha" do
       params: { user: { password: "NovaSenha@123", password_confirmation: "NovaSenha@123" } }
 
     expect(response).to have_http_status(:not_found)
-    expect(response.body).to include("Link de redefinicao de senha invalido ou expirado")
+    expect(response.body).to include("Link de redefinição de senha inválido ou expirado")
     expect(user.reload.authenticate("Senha@123")).to eq(user)
     expect(user.authenticate("NovaSenha@123")).to be(false)
   end

@@ -1,4 +1,6 @@
 class PasswordSetupsController < ApplicationController
+  layout "auth"
+
   before_action :load_user
 
   def edit
@@ -9,7 +11,7 @@ class PasswordSetupsController < ApplicationController
     return render_invalid_token unless @user
 
     if password_params[:password] != password_params[:password_confirmation]
-      flash.now[:alert] = "Confirmacao de senha nao confere"
+      flash.now[:alert] = "Confirmação de senha não confere"
       render :edit, status: :unprocessable_entity
     else
       @user.apply_new_password!(password_params[:password])
@@ -29,7 +31,7 @@ class PasswordSetupsController < ApplicationController
   end
 
   def render_invalid_token
-    flash.now[:alert] = "Link de definicao de senha invalido ou expirado"
+    flash.now[:alert] = "Link de definição de senha inválido ou expirado"
     render :invalid, status: :not_found
   end
 end

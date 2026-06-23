@@ -242,7 +242,7 @@ Quando("o usuario acessa um link invalido de definicao de senha") do
 end
 
 Entao("o sistema nao deve permitir a definicao de senha") do
-  expect(page).to have_content("Link de definicao de senha invalido ou expirado")
+  expect(page).to have_content("Link de definição de senha inválido ou expirado")
 end
 
 Entao("o sistema nao deve salvar a senha do usuario") do

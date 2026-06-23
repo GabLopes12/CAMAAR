@@ -22,7 +22,7 @@ class ApplicationController < ActionController::Base
   end
 
   def require_login
-    redirect_to login_path, alert: "Faca login para continuar" unless user_signed_in?
+    redirect_to login_path, alert: "Faça login para continuar" unless user_signed_in?
   end
 
   def require_admin!

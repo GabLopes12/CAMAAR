@@ -21,7 +21,7 @@ Funcionalidade: Sistema de Definicao de Senha
   Cenario: Usuario nao define senha com link invalido
     Quando o usuario acessa um link invalido de definicao de senha
     Entao o sistema nao deve permitir a definicao de senha
-    E deve exibir a mensagem "Link de definicao de senha invalido ou expirado"
+    E deve exibir a mensagem "Link de definição de senha inválido ou expirado"
 
   Cenario: Usuario nao define senha quando a confirmacao e diferente
     Quando o usuario acessa o link valido de definicao de senha
@@ -29,4 +29,4 @@ Funcionalidade: Sistema de Definicao de Senha
     E confirma a nova senha "OutraSenha@123"
     E envia o formulario de definicao de senha
     Entao o sistema nao deve salvar a senha do usuario
-    E deve exibir a mensagem "Confirmacao de senha nao confere"
+    E deve exibir a mensagem "Confirmação de senha não confere"

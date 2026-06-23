@@ -35,4 +35,4 @@ Funcionalidade: Redefinicao de Senha
     E confirma a nova senha "NovaSenha@123"
     E envia o formulario de redefinicao de senha
     Entao o sistema nao deve atualizar a senha do usuario
-    E deve exibir a mensagem "Link de redefinicao de senha invalido ou expirado"
+    E deve exibir a mensagem "Link de redefinição de senha inválido ou expirado"

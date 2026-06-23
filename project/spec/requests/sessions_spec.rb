@@ -29,7 +29,7 @@ RSpec.describe "Login" do
     post login_path, params: { session: { identifier: "acjpjvjp@gmail.com", password: "SenhaErrada" } }
 
     expect(response).to have_http_status(:unprocessable_content)
-    expect(response.body).to include("Email, matricula ou senha invalidos")
+    expect(response.body).to include("Email, matrícula ou senha inválidos")
   end
 
   it "nao autentica usuario ainda sem senha definida" do

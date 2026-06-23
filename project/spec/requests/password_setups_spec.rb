@@ -24,7 +24,7 @@ RSpec.describe "Definicao de senha" do
     get edit_password_setup_path("token-invalido")
 
     expect(response).to have_http_status(:not_found)
-    expect(response.body).to include("Link de definicao de senha invalido ou expirado")
+    expect(response.body).to include("Link de definição de senha inválido ou expirado")
   end
 
   it "nao salva senha quando a confirmacao e diferente" do
@@ -34,7 +34,7 @@ RSpec.describe "Definicao de senha" do
       params: { user: { password: "Senha@123", password_confirmation: "OutraSenha@123" } }
 
     expect(response).to have_http_status(:unprocessable_content)
-    expect(response.body).to include("Confirmacao de senha nao confere")
+    expect(response.body).to include("Confirmação de senha não confere")
     expect(user.reload).to be_pending_password_setup
   end
 end

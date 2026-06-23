@@ -1,5 +1,7 @@
 class PasswordResetsController < ApplicationController
-  GENERIC_MESSAGE = "Se o email estiver cadastrado, voce recebera instrucoes para redefinir sua senha"
+  layout "auth"
+
+  GENERIC_MESSAGE = "Se o email estiver cadastrado, você receberá instruções para redefinir sua senha"
 
   def new
   end
@@ -21,7 +23,7 @@ class PasswordResetsController < ApplicationController
     return render_invalid_token unless @user
 
     if password_params[:password] != password_params[:password_confirmation]
-      flash.now[:alert] = "Confirmacao de senha nao confere"
+      flash.now[:alert] = "Confirmação de senha não confere"
       render :edit, status: :unprocessable_entity
     else
       @user.apply_new_password!(password_params[:password])
@@ -45,7 +47,7 @@ class PasswordResetsController < ApplicationController
   end
 
   def render_invalid_token
-    flash.now[:alert] = "Link de redefinicao de senha invalido ou expirado"
+    flash.now[:alert] = "Link de redefinição de senha inválido ou expirado"
     render :invalid, status: :not_found
   end
 end

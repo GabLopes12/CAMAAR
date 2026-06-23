@@ -1,5 +1,3 @@
-<%= render "shared/flash" %>
-
 <% content_for :title, "Gerenciamento de Turmas" %>
 
 <h1>Gerenciamento de Turmas</h1>
@@ -7,17 +5,17 @@
 <% if @course_classes.empty? %>
   <p>Nenhuma turma encontrada para o seu departamento no semestre atual.</p>
 <% else %>
-  <div id="turmas">
+  <div id="turmas" class="card-grid">
     <% @course_classes.each do |course_class| %>
-      <div class="turma" style="margin: 10px 0; padding: 10px; border: 1px solid #ccc;">
+      <div class="card turma">
         <h3><%= course_class.name %></h3>
-        <p><strong>Departamento:</strong> <%= course_class.department.name %></p>
-        <p><strong>Semestre:</strong> <%= course_class.semester %></p>
+        <p class="card-subtitle">Departamento: <%= course_class.department.name %></p>
+        <p class="card-subtitle">Semestre: <%= course_class.semester %></p>
 
-        <%= link_to "Avaliar desempenho", course_class_path(course_class) %>
+        <%= link_to "Avaliar desempenho", course_class_path(course_class), class: "btn btn-secondary" %>
       </div>
     <% end %>
   </div>
 <% end %>
 
-<%= link_to "Voltar ao painel", root_path %>
+<%= link_to "Voltar ao painel", root_path, class: "btn-link" %>

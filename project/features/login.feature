@@ -33,7 +33,7 @@ Funcionalidade: Sistema de Login
     E informa a senha "SenhaErrada"
     E envia o formulario de login
     Entao o sistema nao deve autenticar o usuario
-    E deve exibir a mensagem "Email, matricula ou senha invalidos"
+    E deve exibir a mensagem "Email, matrícula ou senha inválidos"
 
   Cenario: Usuario ainda sem senha definida nao consegue acessar
     Quando o usuario acessa a pagina de login
