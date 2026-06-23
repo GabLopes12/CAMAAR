@@ -1,4 +1,5 @@
 class FormulariosController < ApplicationController
+  before_action :require_admin!, only: %i[ new create edit update destroy exportar_csv ]
   before_action :set_formulario, only: %i[ show edit update destroy exportar_csv ]
 
   # GET /formularios or /formularios.json
@@ -27,6 +28,8 @@ class FormulariosController < ApplicationController
   # GET /formularios/new
   def new
     @formulario = Formulario.new
+    @templates = current_admin.templates
+    @course_classes = CourseClass.all
   end
 
   # GET /formularios/1/edit
@@ -35,13 +38,16 @@ class FormulariosController < ApplicationController
 
   # POST /formularios or /formularios.json
   def create
-    @formulario = Formulario.new(formulario_params)
+    result = Formularios::CreateFromTemplate.new(admin: current_admin, params: formulario_params).call
+    @formulario = result.formulario
 
     respond_to do |format|
-      if @formulario.save
-        format.html { redirect_to @formulario, notice: "Formulario was successfully created." }
+      if result.success?
+        format.html { redirect_to formularios_path, notice: "Formulário gerado com sucesso!" }
         format.json { render :show, status: :created, location: @formulario }
       else
+        @templates = current_admin.templates
+        @course_classes = CourseClass.all
         format.html { render :new, status: :unprocessable_content }
         format.json { render json: @formulario.errors, status: :unprocessable_content }
       end
@@ -90,6 +96,6 @@ class FormulariosController < ApplicationController
     end
 
     def formulario_params
-      params.expect(formulario: [ :title, :target_role, :status, :template_id, :course_class_id, :admin_id ])
+      params.expect(formulario: [ :title, :status, :template_id, :course_class_id ])
     end
 end
