@@ -21,14 +21,9 @@ class PasswordResetsController < ApplicationController
   def update
     load_user
     return render_invalid_token unless @user
+    return render_password_mismatch unless passwords_match?
 
-    if password_params[:password] != password_params[:password_confirmation]
-      flash.now[:alert] = "Confirmação de senha não confere"
-      render :edit, status: :unprocessable_entity
-    else
-      @user.apply_new_password!(password_params[:password])
-      redirect_to login_path, notice: "Senha redefinida com sucesso"
-    end
+    apply_password_reset
   end
 
   private
@@ -49,5 +44,19 @@ class PasswordResetsController < ApplicationController
   def render_invalid_token
     flash.now[:alert] = "Link de redefinição de senha inválido ou expirado"
     render :invalid, status: :not_found
+  end
+
+  def passwords_match?
+    password_params[:password] == password_params[:password_confirmation]
+  end
+
+  def render_password_mismatch
+    flash.now[:alert] = "Confirmação de senha não confere"
+    render :edit, status: :unprocessable_entity
+  end
+
+  def apply_password_reset
+    @user.apply_new_password!(password_params[:password])
+    redirect_to login_path, notice: "Senha redefinida com sucesso"
   end
 end

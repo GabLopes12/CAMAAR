@@ -7,16 +7,10 @@ class SessionsController < ApplicationController
   def create
     user = User.find_for_login(session_params[:identifier])
 
-    if user&.pending_password_setup?
-      flash.now[:alert] = "Senha inicial precisa ser definida antes do acesso"
-      render :new, status: :unprocessable_entity
-    elsif user&.authenticate(session_params[:password])
-      session[:user_id] = user.id
-      redirect_to root_path, notice: "Login realizado com sucesso"
-    else
-      flash.now[:alert] = "Email, matrícula ou senha inválidos"
-      render :new, status: :unprocessable_entity
-    end
+    return handle_pending_setup if user&.pending_password_setup?
+    return handle_login_success(user) if user&.authenticate(session_params[:password])
+
+    handle_login_failure
   end
 
   def destroy
@@ -28,5 +22,20 @@ class SessionsController < ApplicationController
 
   def session_params
     params.require(:session).permit(:identifier, :password)
+  end
+
+  def handle_pending_setup
+    flash.now[:alert] = "Senha inicial precisa ser definida antes do acesso"
+    render :new, status: :unprocessable_entity
+  end
+
+  def handle_login_success(user)
+    session[:user_id] = user.id
+    redirect_to root_path, notice: "Login realizado com sucesso"
+  end
+
+  def handle_login_failure
+    flash.now[:alert] = "Email, matrícula ou senha inválidos"
+    render :new, status: :unprocessable_entity
   end
 end

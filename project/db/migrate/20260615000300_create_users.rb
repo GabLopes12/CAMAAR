@@ -1,5 +1,5 @@
 class CreateUsers < ActiveRecord::Migration[8.1]
-  def change
+  def change # rubocop:disable Metrics/AbcSize
     create_table :users do |t|
       t.references :department, foreign_key: true
       t.string :name, null: false

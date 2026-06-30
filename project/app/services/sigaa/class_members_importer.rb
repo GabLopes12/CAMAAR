@@ -11,30 +11,16 @@ module Sigaa
     end
 
     def call
-      created_count = 0
-      updated_count = 0
-      inconsistencies = 0
+      counts = { created: 0, updated: 0, inconsistencies: 0 }
 
       parsed_data.each do |class_payload|
         course_class = find_or_create_course_class(class_payload)
-
         members_for(class_payload).each do |member_payload, membership_role|
-          if invalid_member?(member_payload)
-            register_inconsistency(member_payload, "Participante sem email ou matricula")
-            inconsistencies += 1
-            next
-          end
-
-          user_status = sync_user(member_payload, course_class.department)
-          created_count += 1 if user_status == :created
-          updated_count += 1 if user_status == :updated
-
-          membership_status = ensure_membership(user_for(member_payload), course_class, membership_role)
-          created_count += 1 if membership_status == :created
+          process_member(member_payload, membership_role, course_class, counts)
         end
       end
 
-      Result.new(created_count:, updated_count:, inconsistencies:)
+      Result.new(created_count: counts[:created], updated_count: counts[:updated], inconsistencies: counts[:inconsistencies])
     end
 
     private
@@ -63,10 +49,14 @@ module Sigaa
     end
 
     def department_for(code)
-      department_code = imported_by&.department&.code || code.to_s[/\A[A-Za-z]+/]&.upcase || "GERAL"
+      department_code = resolve_department_code(code)
       department = Department.find_or_create_by!(code: department_code) { |dept| dept.name = department_code }
       imported_by.update!(department:) if imported_by && imported_by.department_id.nil?
       department
+    end
+
+    def resolve_department_code(code)
+      imported_by&.department&.code || code.to_s[/\A[A-Za-z]+/]&.upcase || "GERAL"
     end
 
     def members_for(class_payload)
@@ -95,33 +85,49 @@ module Sigaa
       registration = member_registration(member_payload).to_s.strip
       email = normalized_email(member_payload)
       name = member_payload["nome"]
-
       user = User.find_by(email:) || User.find_by(registration:)
 
-      if user.nil?
-        user = User.create!(
-          name:,
-          email:,
-          registration:,
-          role: :participant,
-          department:
-        )
-        send_password_setup(user) if user.pending_password_setup?
-        return :created
+      return create_user(name, email, registration, department) if user.nil?
+
+      apply_user_updates(user, name, email, registration, department)
+    end
+
+    def create_user(name, email, registration, department)
+      user = User.create!(name:, email:, registration:, role: :participant, department:)
+      send_password_setup(user) if user.pending_password_setup?
+      :created
+    end
+
+    def apply_user_updates(user, name, email, registration, department)
+      updates = build_user_updates(user, name, email, registration, department)
+      return :unchanged unless updates.any?
+
+      user.update!(updates)
+      :updated
+    end
+
+    def build_user_updates(user, name, email, registration, department)
+      {}.tap do |u|
+        u[:name] = name if user.name != name
+        u[:email] = email if user.email != email
+        u[:registration] = registration if user.registration != registration
+        u[:department] = department if user.department_id != department.id
+      end
+    end
+
+    def process_member(member_payload, membership_role, course_class, counts)
+      if invalid_member?(member_payload)
+        register_inconsistency(member_payload, "Participante sem email ou matricula")
+        counts[:inconsistencies] += 1
+        return
       end
 
-      updates = {}
-      updates[:name] = name if user.name != name
-      updates[:email] = email if user.email != email
-      updates[:registration] = registration if user.registration != registration
-      updates[:department] = department if user.department_id != department.id
+      user_status = sync_user(member_payload, course_class.department)
+      counts[:created] += 1 if user_status == :created
+      counts[:updated] += 1 if user_status == :updated
 
-      if updates.any?
-        user.update!(updates)
-        :updated
-      else
-        :unchanged
-      end
+      membership_status = ensure_membership(user_for(member_payload), course_class, membership_role)
+      counts[:created] += 1 if membership_status == :created
     end
 
     def user_for(member_payload)

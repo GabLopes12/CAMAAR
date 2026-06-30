@@ -3,30 +3,34 @@ class RespostaController < ApplicationController
 
   # POST /resposta or /resposta.json
   def create
-    @formulario = Formulario.find(params[:respostum][:formulario_id])
-    @respostas_params = params[:respostum][:respostas] || {}
+    carregar_formulario_e_respostas
+    return redirect_para_formulario_com_alerta if questao_em_branco?
 
-    # Caminho Triste: alguma questão do formulário foi deixada em branco
-    if questao_em_branco?
-      redirect_to formulario_path(@formulario), alert: "Por favor, preencha todas as questões obrigatórias"
-      return
-    end
-
-    # Caminho Feliz: cria a submissão e todas as respostas em uma única transação
     submissao = Submissao.find_or_create_by!(user: current_user, formulario: @formulario)
-
-    Respostum.transaction do
-      @formulario.questaos.each do |questao|
-        respostum = Respostum.find_or_initialize_by(submissao: submissao, questao: questao)
-        atribuir_valor(respostum, questao)
-        respostum.save!
-      end
-    end
-
+    salvar_respostas(submissao)
     redirect_to formularios_path, notice: "Avaliação submetida com sucesso"
   end
 
   private
+    def carregar_formulario_e_respostas
+      @formulario = Formulario.find(params[:respostum][:formulario_id])
+      @respostas_params = params[:respostum][:respostas] || {}
+    end
+
+    def redirect_para_formulario_com_alerta
+      redirect_to formulario_path(@formulario), alert: "Por favor, preencha todas as questões obrigatórias"
+    end
+
+    def salvar_respostas(submissao)
+      Respostum.transaction do
+        @formulario.questaos.each do |questao|
+          respostum = Respostum.find_or_initialize_by(submissao: submissao, questao: questao)
+          atribuir_valor(respostum, questao)
+          respostum.save!
+        end
+      end
+    end
+
     def questao_em_branco?
       @formulario.questaos.any? { |questao| valor_para(questao).blank? }
     end

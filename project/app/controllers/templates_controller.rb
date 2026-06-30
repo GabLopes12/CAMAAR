@@ -35,17 +35,10 @@ class TemplatesController < ApplicationController
       return render :new, status: :ok
     end
 
-    if @template.valid? && questoes_attrs_valid?
-      Template.transaction do
-        @template.save!
-        @questoes_attrs.each do |questao|
-          @template.questaos.create!(enunciado: questao[:enunciado], tipo: questao[:tipo])
-        end
-      end
-      redirect_to templates_path, notice: "Template criado com sucesso."
-    else
-      render :new, status: :unprocessable_content
-    end
+    return render :new, status: :unprocessable_content unless @template.valid? && questoes_attrs_valid?
+
+    salvar_novo_template
+    redirect_to templates_path, notice: "Template criado com sucesso."
   end
 
   # PATCH/PUT /templates/1 or /templates/1.json
@@ -58,23 +51,7 @@ class TemplatesController < ApplicationController
       return render :edit, status: :ok
     end
 
-    novas_questoes = @questoes_attrs.reject { |questao| questao[:id].present? }
-
-    if @template.valid? && novas_questoes_validas?(novas_questoes)
-      Template.transaction do
-        @template.save!
-        @questoes_attrs.each do |questao|
-          if questao[:id].present?
-            @template.questaos.find(questao[:id]).update!(enunciado: questao[:enunciado], tipo: questao[:tipo])
-          else
-            @template.questaos.create!(enunciado: questao[:enunciado], tipo: questao[:tipo])
-          end
-        end
-      end
-      redirect_to templates_path, notice: "Template atualizado com sucesso."
-    else
-      render :edit, status: :unprocessable_content
-    end
+    processar_atualizacao_template
   end
 
   # DELETE /templates/1 or /templates/1.json
@@ -128,6 +105,36 @@ class TemplatesController < ApplicationController
         false
       else
         true
+      end
+    end
+
+    def processar_atualizacao_template
+      novas_questoes = @questoes_attrs.reject { |questao| questao[:id].present? }
+      return render :edit, status: :unprocessable_content unless @template.valid? && novas_questoes_validas?(novas_questoes)
+
+      atualizar_template
+      redirect_to templates_path, notice: "Template atualizado com sucesso."
+    end
+
+    def salvar_novo_template
+      Template.transaction do
+        @template.save!
+        @questoes_attrs.each { |q| @template.questaos.create!(enunciado: q[:enunciado], tipo: q[:tipo]) }
+      end
+    end
+
+    def atualizar_template
+      Template.transaction do
+        @template.save!
+        @questoes_attrs.each { |q| persistir_questao(q) }
+      end
+    end
+
+    def persistir_questao(questao)
+      if questao[:id].present?
+        @template.questaos.find(questao[:id]).update!(enunciado: questao[:enunciado], tipo: questao[:tipo])
+      else
+        @template.questaos.create!(enunciado: questao[:enunciado], tipo: questao[:tipo])
       end
     end
 end

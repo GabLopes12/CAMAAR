@@ -13,15 +13,7 @@ module Sigaa
       classes_result = ClassesImporter.new(path: classes_path, semester:, imported_by:).call
       members_result = ClassMembersImporter.new(path: members_path, semester:, imported_by:).call
 
-      created_count = classes_result.created_count + members_result.created_count
-      updated_count = classes_result.updated_count + members_result.updated_count
-
-      Result.new(
-        created_count:,
-        updated_count:,
-        inconsistencies: members_result.inconsistencies,
-        already_up_to_date?: created_count.zero? && updated_count.zero?
-      )
+      build_result(classes_result, members_result)
     end
 
     def self.available_semesters(classes_path: ClassesImporter::DEFAULT_PATH, members_path: ClassMembersImporter::DEFAULT_PATH)
@@ -34,5 +26,16 @@ module Sigaa
     private
 
     attr_reader :semester, :imported_by, :classes_path, :members_path
+
+    def build_result(classes_result, members_result)
+      created_count = classes_result.created_count + members_result.created_count
+      updated_count = classes_result.updated_count + members_result.updated_count
+      Result.new(
+        created_count:,
+        updated_count:,
+        inconsistencies: members_result.inconsistencies,
+        already_up_to_date?: created_count.zero? && updated_count.zero?
+      )
+    end
   end
 end

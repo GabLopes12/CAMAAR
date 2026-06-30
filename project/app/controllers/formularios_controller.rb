@@ -33,17 +33,7 @@ class FormulariosController < ApplicationController
     result = Formularios::CreateFromTemplate.new(admin: current_admin, params: formulario_params).call
     @formulario = result.formulario
 
-    respond_to do |format|
-      if result.success?
-        format.html { redirect_to formularios_path, notice: "Formulário gerado com sucesso!" }
-        format.json { render :show, status: :created, location: @formulario }
-      else
-        @templates = current_admin.templates
-        @course_classes = CourseClass.all
-        format.html { render :new, status: :unprocessable_content }
-        format.json { render json: @formulario.errors, status: :unprocessable_content }
-      end
-    end
+    result.success? ? render_create_success : render_create_failure
   end
 
   # DELETE /formularios/1
@@ -54,18 +44,7 @@ class FormulariosController < ApplicationController
 
   # GET /formularios/1/exportar_csv
   def exportar_csv
-    require "csv"
-
-    csv_data = CSV.generate(headers: true) do |csv|
-      csv << [ "ID da Pergunta", "Enunciado", "Tipo", "Respostas" ]
-
-      @formulario.questaos.each do |questao|
-        valores = questao.respostas.map { |resposta| helpers.formatar_resposta(resposta, questao.tipo) }
-        csv << [ questao.id, questao.enunciado, questao.tipo, valores.join("; ") ]
-      end
-    end
-
-    send_data csv_data,
+    send_data gerar_csv,
               filename: "respostas_formulario_#{@formulario.id}.csv",
               type: "text/csv"
   end
@@ -85,11 +64,48 @@ class FormulariosController < ApplicationController
 
     def formularios_pendentes_para(user)
       formularios_respondidos_ids = Submissao.where(user: user).select(:formulario_id)
-      papel_por_turma = user.class_memberships.each_with_object({}) { |membership, hash| hash[membership.course_class_id] = membership.role }
+      mapa = papel_por_turma(user)
 
       Formulario
-        .where(course_class_id: papel_por_turma.keys)
+        .where(course_class_id: mapa.keys)
         .where.not(id: formularios_respondidos_ids)
-        .select { |formulario| papel_por_turma[formulario.course_class_id] == formulario.target_role }
+        .select { |formulario| mapa[formulario.course_class_id] == formulario.target_role }
+    end
+
+    def papel_por_turma(user)
+      user.class_memberships.each_with_object({}) { |m, h| h[m.course_class_id] = m.role }
+    end
+
+    def gerar_csv
+      require "csv"
+      CSV.generate(headers: true) do |csv|
+        csv << cabecalho_csv
+        @formulario.questaos.each { |q| csv << linha_csv(q) }
+      end
+    end
+
+    def cabecalho_csv
+      [ "ID da Pergunta", "Enunciado", "Tipo", "Respostas" ]
+    end
+
+    def linha_csv(questao)
+      valores = questao.respostas.map { |r| helpers.formatar_resposta(r, questao.tipo) }
+      [ questao.id, questao.enunciado, questao.tipo, valores.join("; ") ]
+    end
+
+    def render_create_success
+      respond_to do |format|
+        format.html { redirect_to formularios_path, notice: "Formulário gerado com sucesso!" }
+        format.json { render :show, status: :created, location: @formulario }
+      end
+    end
+
+    def render_create_failure
+      @templates = current_admin.templates
+      @course_classes = CourseClass.all
+      respond_to do |format|
+        format.html { render :new, status: :unprocessable_content }
+        format.json { render json: @formulario.errors, status: :unprocessable_content }
+      end
     end
 end
