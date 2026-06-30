@@ -7,7 +7,7 @@ defaults:
 on:
   pull_request:
   push:
-    branches: [ main ]
+    branches: [ main, sprint-3 ]
 
 jobs:
   scan_ruby:
