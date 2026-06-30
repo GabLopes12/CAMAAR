@@ -1,3 +1,5 @@
+##
+# Representa uma avaliação criada a partir de um template para uma turma específica.
 class Formulario < ApplicationRecord
   belongs_to :template, optional: true
   belongs_to :course_class, optional: true

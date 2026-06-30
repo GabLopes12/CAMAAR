@@ -1,3 +1,5 @@
+##
+# Registra que um usuário submeteu respostas para um formulário.
 class Submissao < ApplicationRecord
   belongs_to :formulario
   belongs_to :user

@@ -1,3 +1,5 @@
+##
+# Representa o vínculo de um usuário com uma turma como discente ou docente.
 class ClassMembership < ApplicationRecord
   belongs_to :user
   belongs_to :course_class
