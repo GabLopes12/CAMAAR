@@ -8,7 +8,7 @@ Dado('que estou logado no sistema como {string}') do |perfil|
   trait = perfil == 'Administrador' ? :admin : nil
   @user = trait ? create(:user, trait) : create(:user)
 
-  visit '/login' 
+  visit '/login'
   fill_in 'Email ou matricula', with: @user.email
   fill_in 'Senha', with: 'Senha@123'
   click_button 'Entrar'
@@ -73,7 +73,7 @@ E('eu já respondi a todos os formulários ativos das minhas turmas') do
   @turma = create(:course_class)
   @user.course_classes << @turma
   formulario = create(:formulario, course_class: @turma)
-  
+
   create(:submissao, formulario: formulario, user: @user)
   visit current_path
 end
@@ -99,8 +99,8 @@ E('que estou na página do formulário não respondido da minha turma') do
   @turma = create(:course_class)
   @user.course_classes << @turma
   @formulario = create(:formulario, :com_questao, course_class: @turma)
-  
-  visit formulario_path(@formulario) 
+
+  visit formulario_path(@formulario)
 end
 
 Quando('eu preencho todas as avaliações corretamente') do

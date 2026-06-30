@@ -10,3 +10,6 @@ inherit_gem: { rubocop-rails-omakase: rubocop.yml }
 AllCops:
   Exclude:
     - "lib/tasks/cucumber.rake"
+
+Metrics/AbcSize:
+  Max: 15
