@@ -161,6 +161,39 @@ RSpec.describe "Templates", type: :request do
     end
   end
 
+  describe "GET /templates/:id" do
+    it "exibe o template do administrador autenticado" do
+      admin = create(:user, :admin)
+      template = create(:template, :com_questao, admin: admin)
+
+      login_as(admin)
+      get template_path(template)
+
+      expect(response).to have_http_status(:success)
+    end
+  end
+
+  describe "PATCH /templates/:id com add_questao" do
+    it "adiciona campo de questao sem persistir ao clicar em '+' durante edicao" do
+      admin = create(:user, :admin)
+      template = create(:template, :com_questao, admin: admin)
+      questao_existente = template.questaos.first
+
+      login_as(admin)
+      patch template_path(template), params: {
+        add_questao: "+",
+        template: {
+          title: template.title,
+          target_role: template.target_role,
+          questaos: { "0" => { id: questao_existente.id, enunciado: questao_existente.enunciado, tipo: questao_existente.tipo } }
+        }
+      }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("template[questaos][1][enunciado]")
+    end
+  end
+
   describe "DELETE /templates/:id" do
     it "remove o template, desvincula formulários gerados e mantém suas questões clonadas" do
       admin = create(:user, :admin)

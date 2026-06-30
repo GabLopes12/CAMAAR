@@ -38,4 +38,14 @@ RSpec.describe "Login" do
     expect(response).to have_http_status(:unprocessable_content)
     expect(response.body).to include("Senha inicial precisa ser definida antes do acesso")
   end
+
+  it "realiza logout e redireciona para a tela de login" do
+    post login_path, params: { session: { identifier: "acjpjvjp@gmail.com", password: "Senha@123" } }
+
+    delete logout_path
+
+    expect(response).to redirect_to(login_path)
+    follow_redirect!
+    expect(response.body).to include("Logout realizado com sucesso")
+  end
 end

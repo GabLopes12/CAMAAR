@@ -46,6 +46,25 @@ RSpec.describe "Redefinicao de senha" do
     expect(user.authenticate("NovaSenha@123")).to be(false)
   end
 
+  it "nao redefine senha quando a confirmacao nao confere" do
+    token = user.generate_password_reset_token!
+
+    patch password_reset_path(token),
+      params: { user: { password: "NovaSenha@123", password_confirmation: "SenhaErrada@123" } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.body).to include("Confirmação de senha não confere")
+    expect(user.reload.authenticate("Senha@123")).to eq(user)
+  end
+
+  it "exibe o formulario de redefinicao de senha com token valido" do
+    token = user.generate_password_reset_token!
+
+    get edit_password_reset_path(token)
+
+    expect(response).to have_http_status(:success)
+  end
+
   def extract_token_from(body, segment)
     body.match(%r{#{segment}/([^"\s<]+)})[1]
   end

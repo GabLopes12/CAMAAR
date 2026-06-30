@@ -20,7 +20,27 @@ RSpec.describe "Formularios", type: :request do
     end
   end
 
+  describe "GET /formularios/new" do
+    it "exibe o formulário de criação para admin autenticado" do
+      admin = create(:user, :admin)
+      login_as(admin)
+      get new_formulario_path
+
+      expect(response).to have_http_status(:success)
+    end
+  end
+
   describe "GET /formularios/:id" do
+    it "exibe formulário para participante sem dados de submissões" do
+      user = create(:user)
+      formulario = create(:formulario)
+
+      login_as(user)
+      get formulario_path(formulario)
+
+      expect(response).to have_http_status(:success)
+    end
+
     it "exibe para o administrador as perguntas e as respectivas respostas recebidas" do
       admin = create(:user, :admin)
       formulario = create(:formulario, admin: admin)
