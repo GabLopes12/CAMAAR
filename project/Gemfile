@@ -64,6 +64,8 @@ group :development do
   gem "web-console"
 
   gem "rubycritic", require: false
+  # Generate API documentation for the application source code
+  gem "rdoc", "~> 7.2", require: false
 end
 
 group :test do

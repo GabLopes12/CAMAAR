@@ -1,3 +1,5 @@
+##
+# Representa uma questão pertencente a um template ou a um formulário clonado.
 class Questao < ApplicationRecord
   # A chave estrangeira é nula para template se pertencer a formulário, e vice-versa
   belongs_to :template, optional: true

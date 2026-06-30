@@ -1,3 +1,5 @@
+##
+# Representa uma oferta de disciplina identificada por código, turma e semestre.
 class CourseClass < ApplicationRecord
   belongs_to :department
   has_many :class_memberships, dependent: :destroy
