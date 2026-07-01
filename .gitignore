@@ -35,3 +35,8 @@ project/config/*.key
 
 AGENTS.md
 PROJECT_CONTEXT.md
+
+CLAUDE.md
+.claude/
+
+codex/

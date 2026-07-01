@@ -1,14 +1,34 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  resources :resposta, only: %i[ create ]
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
+  resources :formularios, only: %i[ index show new create destroy ] do
+    member do
+      get :exportar_csv
+    end
+  end
+
+  resources :templates
+
+  resources :course_classes, only: %i[ index show ], path: "turmas"
+
   get "up" => "rails/health#show", as: :rails_health_check
 
-  # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
-  # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
+  root "dashboard#show"
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+  get "login", to: "sessions#new", as: :login
+  post "login", to: "sessions#create"
+  delete "logout", to: "sessions#destroy"
+
+  get "senha/definir/:token", to: "password_setups#edit", as: :edit_password_setup
+  patch "senha/definir/:token", to: "password_setups#update", as: :password_setup
+
+  get "senha/esqueci", to: "password_resets#new", as: :new_password_reset
+  post "senha/esqueci", to: "password_resets#create", as: :password_resets
+  get "senha/redefinir/:token", to: "password_resets#edit", as: :edit_password_reset
+  patch "senha/redefinir/:token", to: "password_resets#update", as: :password_reset
+
+  namespace :imports do
+    get "sigaa", to: "sigaa#new"
+    post "sigaa", to: "sigaa#create"
+  end
 end

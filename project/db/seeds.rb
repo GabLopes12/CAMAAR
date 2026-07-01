@@ -1,9 +1,17 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
+# Seed de desenvolvimento — pode ser executado múltiplas vezes (idempotente).
 #
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
+# O sistema é populado com turmas, docentes e discentes através do botão de
+# "Importar dados do SIGAA" (tela de administração), não pelo seed. Aqui só
+# criamos a conta de administrador necessária para fazer login e disparar essa
+# importação.
+
+admin = User.find_or_create_by!(email: "admin.cic@unb.br") do |u|
+  u.name         = "Admin CAMAAR"
+  u.registration = "000000001"
+  u.role         = :admin
+  u.password     = "Senha@123"
+end
+
+puts "Seed concluída:"
+puts "  Admin: #{admin.email} / Senha@123"
+puts "  Use a tela 'Importar dados do SIGAA' para popular turmas, docentes e discentes."
